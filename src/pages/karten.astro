@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { site, fmt, getAktuellesStueck, termineVon } from '../lib/data';
+import { site, fmt, getAktuellesStueck, termineVon, pfad } from '../lib/data';
 
 const stueck = await getAktuellesStueck();
 const d = stueck?.data;
@@ -11,7 +11,7 @@ const einbetten = !!shopUrl && site.ticketshop_einbetten;
 ---
 <Base titel="Karten" beschreibung={d ? `Karten für ${d.titel}` : 'Karten'} aktiv="karten" footerKompakt>
   <div class="wrap" style="padding-top:16px">
-    <a class="pfeil-link" href="/#spielplan" style="color:var(--text);font-weight:600;font-size:15px"><Icon name="zurueck" size={16} />Zurück zum Spielplan</a>
+    <a class="pfeil-link" href={pfad('/#spielplan')} style="color:var(--text);font-weight:600;font-size:15px"><Icon name="zurueck" size={16} />Zurück zum Spielplan</a>
   </div>
   <div class="wrap karten-layout" style="padding-top:24px">
     <section class="stage grain" aria-labelledby="karten-titel">

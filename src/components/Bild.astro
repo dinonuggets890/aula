@@ -1,6 +1,6 @@
 ---
 import { Picture } from 'astro:assets';
-import { bildMeta } from '../lib/data';
+import { bildMeta, pfad } from '../lib/data';
 
 interface Props {
   src: string;
@@ -17,5 +17,5 @@ const passende = meta ? [...new Set([...widths.filter((w) => w < meta.width), me
 {meta ? (
   <Picture src={meta} alt={alt} widths={passende} sizes={sizes} formats={['avif', 'webp']} loading={loading} decoding="async" />
 ) : src ? (
-  <img src={src} alt={alt} loading={loading} decoding="async" />
+  <img src={pfad(src)} alt={alt} loading={loading} decoding="async" />
 ) : null}

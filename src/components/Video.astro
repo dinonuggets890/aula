@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import { pfad } from '../lib/data';
 
 interface Props {
   src: string;
@@ -12,7 +13,7 @@ interface Props {
 const { src, poster = '', format = 'hoch', titel = '', kicker = '', klein = false } = Astro.props;
 ---
 <div class:list={['video', 'grain', `video--${format}`]} data-video>
-  <video src={src} poster={poster || undefined} preload="metadata" playsinline controls={false}>
+  <video src={pfad(src)} poster={poster ? pfad(poster) : undefined} preload="metadata" playsinline controls={false}>
     Ihr Browser kann dieses Video nicht abspielen.
   </video>
   <button class="video__start" type="button" aria-label={titel ? `Video abspielen: ${titel}` : 'Video abspielen'}>

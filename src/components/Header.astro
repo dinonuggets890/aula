@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { site, mailto } from '../lib/data';
+import { site, mailto, pfad } from '../lib/data';
 
 interface Props {
   aktiv?: 'chronik' | 'karten' | 'fotos' | '';
@@ -16,19 +16,19 @@ const links = [
 ---
 <header class="kopf">
   <div class="wrap kopf__inner">
-    <a class="kopf__logo" href="/" aria-label={`${site.seitentitel}, zur Startseite`}>
-      <img src="/img/logo-rot.svg" alt="Die Aula, Schauspielgruppe Neusäß e.V." width="859" height="296" />
+    <a class="kopf__logo" href={pfad('/')} aria-label={`${site.seitentitel}, zur Startseite`}>
+      <img src={pfad('/img/logo-rot.svg')} alt="Die Aula, Schauspielgruppe Neusäß e.V." width="859" height="296" />
     </a>
     <nav class="kopf__nav" aria-label="Hauptnavigation">
       {links.map((l) => (
-        <a href={l.href} aria-current={aktiv && l.key === aktiv ? 'page' : undefined}>{l.text}</a>
+        <a href={pfad(l.href)} aria-current={aktiv && l.key === aktiv ? 'page' : undefined}>{l.text}</a>
       ))}
-      <a class="btn btn--rot btn--klein" href="/karten/" aria-current={aktiv === 'karten' ? 'page' : undefined}>
+      <a class="btn btn--rot btn--klein" href={pfad('/karten/')} aria-current={aktiv === 'karten' ? 'page' : undefined}>
         Karten<Icon name="pfeil" size={16} />
       </a>
     </nav>
     <div class="kopf__mobil">
-      <a class="btn btn--rot btn--klein" href="/karten/" style="min-height:44px;padding:0 14px;font-size:14px">Karten</a>
+      <a class="btn btn--rot btn--klein" href={pfad('/karten/')} style="min-height:44px;padding:0 14px;font-size:14px">Karten</a>
       <button class="menu-btn" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobilmenu" data-menu-auf>
         <Icon name="menu" size={26} />
       </button>
@@ -36,16 +36,16 @@ const links = [
   </div>
   <div class="mobilmenu" id="mobilmenu" role="dialog" aria-modal="true" aria-label="Menü" hidden>
     <div class="mobilmenu__kopf">
-      <img src="/img/logo-weiss.svg" alt="Die Aula, Schauspielgruppe Neusäß e.V." width="859" height="296" />
+      <img src={pfad('/img/logo-weiss.svg')} alt="Die Aula, Schauspielgruppe Neusäß e.V." width="859" height="296" />
       <button class="menu-btn" type="button" aria-label="Menü schließen" data-menu-zu>
         <Icon name="schliessen" size={26} />
       </button>
     </div>
     <nav aria-label="Hauptnavigation mobil">
-      {links.map((l) => <a href={l.href} data-menu-link>{l.text}</a>)}
+      {links.map((l) => <a href={pfad(l.href)} data-menu-link>{l.text}</a>)}
     </nav>
     <div class="mobilmenu__fuss">
-      <a class="btn btn--papier" href="/karten/">Karten<Icon name="pfeil" /></a>
+      <a class="btn btn--papier" href={pfad('/karten/')}>Karten<Icon name="pfeil" /></a>
       <a href={mailto}>{site.email}</a>
     </div>
   </div>

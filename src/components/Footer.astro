@@ -1,5 +1,5 @@
 ---
-import { site } from '../lib/data';
+import { site, pfad } from '../lib/data';
 
 interface Props {
   kompakt?: boolean;
@@ -11,25 +11,25 @@ const jahr = new Date().getFullYear();
   <div class="wrap fuss__inner">
     {!kompakt && <p class="fuss__gross" aria-hidden="true">Vorhang auf<span class="rot">.</span></p>}
     <div class="fuss__mitte">
-      <img src="/img/logo-weiss.svg" alt="Die Aula, Schauspielgruppe Neusäß e.V." width="859" height="296" loading="lazy" />
+      <img src={pfad('/img/logo-weiss.svg')} alt="Die Aula, Schauspielgruppe Neusäß e.V." width="859" height="296" loading="lazy" />
       <nav class="fuss__nav" aria-label="Fußzeile">
         <div>
           <p class="kicker">Programm</p>
-          <a href="/#spielplan">Spielplan</a>
-          <a href="/#stueck">Das Stück</a>
-          <a href="/karten/">Karten</a>
+          <a href={pfad('/#spielplan')}>Spielplan</a>
+          <a href={pfad('/#stueck')}>Das Stück</a>
+          <a href={pfad('/karten/')}>Karten</a>
         </div>
         <div>
           <p class="kicker">Verein</p>
-          <a href="/#verein">Über uns</a>
-          <a href="/chronik/">Chronik</a>
-          <a href="/fotos/">Fotoalbum</a>
-          <a href="/#mitmachen">Mitgliedschaft</a>
+          <a href={pfad('/#verein')}>Über uns</a>
+          <a href={pfad('/chronik/')}>Chronik</a>
+          <a href={pfad('/fotos/')}>Fotoalbum</a>
+          <a href={pfad('/#mitmachen')}>Mitgliedschaft</a>
         </div>
         <div>
           <p class="kicker">Rechtliches</p>
-          <a href="/impressum/">Impressum</a>
-          <a href="/datenschutz/">Datenschutz</a>
+          <a href={pfad('/impressum/')}>Impressum</a>
+          <a href={pfad('/datenschutz/')}>Datenschutz</a>
         </div>
       </nav>
     </div>

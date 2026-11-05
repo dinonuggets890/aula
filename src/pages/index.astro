@@ -7,7 +7,7 @@ import Video from '../components/Video.astro';
 import TicketKarte from '../components/TicketKarte.astro';
 import {
   site, club, fotos, fmt, heuteISO, mailto, dateiDa, isoMitZone,
-  getAktuellesStueck, getChronik, termineVon,
+  getAktuellesStueck, getChronik, termineVon, pfad,
 } from '../lib/data';
 
 const heute = heuteISO();
@@ -117,7 +117,7 @@ const jsonLd = stueck && kommend.length
           </h1>
           <div class="hero__unten">
             <p class="hero__text lead">Unsere nächste Produktion ist in Vorbereitung. Neue Termine folgen.</p>
-            <div class="hero__aktionen"><a class="btn btn--rot" href="/chronik/">Zur Chronik<Icon name="pfeil" /></a></div>
+            <div class="hero__aktionen"><a class="btn btn--rot" href={pfad('/chronik/')}>Zur Chronik<Icon name="pfeil" /></a></div>
           </div>
         </>
       )}
@@ -154,7 +154,7 @@ const jsonLd = stueck && kommend.length
             {d!.genre && <div><dt>Genre</dt><dd>{d!.genre}</dd></div>}
           </dl>
           {flyerDa && (
-            <a class="pfeil-link pfeil-link--linie" href={d!.flyer} download><Icon name="download" />Flyer herunterladen (PDF)</a>
+            <a class="pfeil-link pfeil-link--linie" href={pfad(d!.flyer)} download><Icon name="download" />Flyer herunterladen (PDF)</a>
           )}
         </div>
         {(trailerDa || btsDa || d!.bild) && (
@@ -241,7 +241,7 @@ const jsonLd = stueck && kommend.length
       <div class="stapel" style="gap:20px">
         <div class="kopfzeile" style="align-items:baseline">
           <h3 class="display" style="font-size:32px;font-weight:800;line-height:1">Aus dem Fotoalbum</h3>
-          <a class="pfeil-link" href="/fotos/">Alle Fotos<Icon name="pfeil" size={16} /></a>
+          <a class="pfeil-link" href={pfad('/fotos/')}>Alle Fotos<Icon name="pfeil" size={16} /></a>
         </div>
         <ul class="fotos">
           {fotos.slice(0, 6).map((f) => (
@@ -265,12 +265,12 @@ const jsonLd = stueck && kommend.length
           <p class="label">Chronik</p>
           <h2 id="chronik-titel" class="display h-l">Zuletzt auf <span class="serif">unserer</span> Bühne</h2>
         </div>
-        <a class="btn btn--rot" href="/chronik/">Alle Produktionen<Icon name="pfeil" /></a>
+        <a class="btn btn--rot" href={pfad('/chronik/')}>Alle Produktionen<Icon name="pfeil" /></a>
       </div>
       <ol class="zeilen">
         {chronik.map((e) => (
           <li>
-            <a class="zeile" href="/chronik/">
+            <a class="zeile" href={pfad('/chronik/')}>
               <span class="zeile__jahr">{e.jahr}</span>
               <span class="zeile__titel">{e.titel}</span>
               <span class="zeile__info">{e.info}</span>
@@ -284,7 +284,7 @@ const jsonLd = stueck && kommend.length
 
   <!-- Mitmachen -->
   <section id="mitmachen" class="mitmachen" aria-labelledby="mitmachen-titel">
-    <img class="mitmachen__marke" src="/img/bildmarke-weiss.svg" alt="" aria-hidden="true" loading="lazy" />
+    <img class="mitmachen__marke" src={pfad('/img/bildmarke-weiss.svg')} alt="" aria-hidden="true" loading="lazy" />
     <div class="wrap abschnitt zwei-spalten" style="position:relative;align-items:start">
       <div class="stapel">
         <p class="label label--hell">Mitmachen</p>
@@ -295,12 +295,12 @@ const jsonLd = stueck && kommend.length
       <div class="stapel" style="padding-top:clamp(0px,3vw,44px)">
         <p class="mitmachen__text">{club.mitmachen_text}</p>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
-          {antragDa && <a class="btn btn--papier" href={club.mitgliedsantrag} download><Icon name="download" />Mitgliedsantrag (PDF)</a>}
+          {antragDa && <a class="btn btn--papier" href={pfad(club.mitgliedsantrag)} download><Icon name="download" />Mitgliedsantrag (PDF)</a>}
           <a class="btn btn--ghost" href={mailto}>E-Mail schreiben</a>
         </div>
         <p class="klein">
           {club.mitmachen_hinweis} E-Mail: <a href={mailto}>{site.email}</a>.
-          {anlageDa && <> Die <a href={club.datenschutz_anlage} download>Anlage zum Datenschutz (PDF)</a> gehört zum Antrag.</>}
+          {anlageDa && <> Die <a href={pfad(club.datenschutz_anlage)} download>Anlage zum Datenschutz (PDF)</a> gehört zum Antrag.</>}
         </p>
         {club.junges_theater_text && (
           <div class="jt">
@@ -325,7 +325,7 @@ const jsonLd = stueck && kommend.length
       <p class="kicker rot">Vorverkauf</p>
       <h3>Karten</h3>
       <p class="pretty">{site.vorverkauf_stellen}</p>
-      <a class="pfeil-link" href="/karten/">Zu den Karten<Icon name="pfeil" size={16} /></a>
+      <a class="pfeil-link" href={pfad('/karten/')}>Zu den Karten<Icon name="pfeil" size={16} /></a>
     </div>
     <div>
       <p class="kicker rot">Kontakt</p>

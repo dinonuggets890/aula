@@ -1,0 +1,59 @@
+# Baut die Website und veröffentlicht sie auf GitHub Pages.
+# Läuft bei jeder Änderung auf main (auch aus Pages CMS), täglich nachts
+# (damit vergangene Termine verschwinden) und auf Knopfdruck.
+#
+# Einmalig einrichten: Settings › Pages › Source: „GitHub Actions“.
+
+name: Website veröffentlichen (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      - run: npm ci
+      - run: npm run build
+        env:
+          # z. B. https://dinonuggets890.github.io und /aula
+          # (bei eigener Domain: https://meine-domain.de und leer)
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

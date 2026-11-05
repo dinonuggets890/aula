@@ -54,7 +54,7 @@ export interface Termin {
 /** Ticket-Link: Termin > Stück > allgemeiner Ticketshop > Kartenseite */
 function ticketLink(termin: { ticket_url: string }, stueck: Stueck) {
   const url = termin.ticket_url || stueck.data.ticket_url || site.ticketshop_url;
-  return { href: url || '/karten/', extern: /^https?:\/\//.test(url) };
+  return { href: url || pfad('/karten/'), extern: /^https?:\/\//.test(url) };
 }
 
 export function termineVon(stueck: Stueck): Termin[] {
@@ -153,4 +153,16 @@ export function isoMitZone(datum: string, uhrzeit: string): string {
   const off = Number(teil.replace('GMT', '') || '0');
   const zone = `${off >= 0 ? '+' : '-'}${String(Math.abs(off)).padStart(2, '0')}:00`;
   return `${datum}T${h.padStart(2, '0')}:${m.padStart(2, '0')}:00${zone}`;
+}
+
+/**
+ * Interne Pfade (z. B. "/karten/", "/dateien/flyer.pdf") um den Basis-Pfad ergänzen.
+ * Nötig, wenn die Seite in einem Unterordner läuft (GitHub Pages: /aula/).
+ * Externe Links, mailto:, #Anker und leere Werte bleiben unverändert.
+ */
+export function pfad(url: string): string {
+  if (!url || !url.startsWith('/') || url.startsWith('//')) return url;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  if (base && (url === base || url.startsWith(`${base}/`))) return url;
+  return `${base}${url}`;
 }

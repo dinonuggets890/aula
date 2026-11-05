@@ -1,10 +1,12 @@
 # Website Schauspielgruppe Neusäß e.V.
 
-Statische Website mit [Astro](https://astro.build), Inhaltspflege über [Pages CMS](https://pagescms.org) und Veröffentlichung auf dem Strato-Webspace.
+Statische Website mit [Astro](https://astro.build), Inhaltspflege über [Pages CMS](https://pagescms.org) und Veröffentlichung auf GitHub Pages (später optional Strato).
 
 ```
-Pages CMS ──speichert──> GitHub-Repo ──GitHub Action──> npm run build ──SFTP──> Strato
+Pages CMS ──speichert──> GitHub-Repo (main) ──GitHub Action──> npm run build ──> GitHub Pages
 ```
+
+Adresse vorerst: https://dinonuggets890.github.io/aula/
 
 ## Lokal starten
 
@@ -43,23 +45,26 @@ Automatik:
 
 ## Einrichtung
 
-### 1. GitHub
+### 1. GitHub Pages
 
-1. Neues Repository anlegen (privat oder öffentlich) und dieses Projekt pushen (`main`).
-2. Unter *Settings › Secrets and variables › Actions* vier Secrets anlegen:
-   - `STRATO_SFTP_HOST` (z. B. `5012345.ssh.w1.strato.hosting`)
-   - `STRATO_SFTP_USER`
-   - `STRATO_SFTP_PASSWORD`
-   - `STRATO_SFTP_PATH` (Zielordner, z. B. `/schauspielgruppe`)
+1. Projekt auf den Branch `main` pushen.
+2. *Settings › Pages › Build and deployment › Source* auf **GitHub Actions** stellen.
+   (Mit kostenlosem GitHub-Konto muss das Repository dafür öffentlich sein.)
+3. Jeder Push auf `main` (auch jede Speicherung in Pages CMS) startet *Actions › Website veröffentlichen (GitHub Pages)*. Zusätzlich baut sich die Seite jede Nacht neu. Manuell starten geht dort über *Run workflow*.
 
-### 2. Strato
+Die Seite liegt dann im Unterordner `/aula/`. Adresse und Unterordner setzt der Workflow automatisch (`SITE_URL`, `BASE_PATH`). Interne Links im Code immer mit `pfad('/…')` aus `src/lib/data.ts` schreiben, sonst fehlt der Unterordner.
 
-1. Im Strato-Kundenlogin einen **SFTP-Zugang** anlegen (ab Paket „Hosting Starter“ verfügbar). Server, Benutzername und Passwort in die Secrets oben eintragen.
-2. Einen **eigenen, leeren Ordner** für die Website anlegen und die Domain auf diesen Ordner zeigen lassen.
-   **Wichtig:** Der Upload spiegelt `dist/` und löscht im Zielordner alles, was nicht dazugehört. Nie auf einen Ordner mit anderen Daten zeigen lassen.
-3. SSL für die Domain aktivieren. Die `.htaccess` leitet auf HTTPS um und alte WordPress-Adressen auf die neuen Seiten.
+Eigene Domain später: unter *Settings › Pages › Custom domain* eintragen, dann fällt der Unterordner automatisch weg.
 
-Jeder Push auf `main` (auch jede Speicherung in Pages CMS) startet *Actions › Website veröffentlichen*. Manuell starten geht dort über *Run workflow*.
+### 2. Später: Umzug zu Strato (optional)
+
+Der Workflow `.github/workflows/strato.yml` ist vorbereitet, läuft aber nur manuell. Für den Umzug:
+
+1. Unter *Settings › Secrets and variables › Actions* vier Secrets anlegen: `STRATO_SFTP_HOST` (z. B. `5012345.ssh.w1.strato.hosting`), `STRATO_SFTP_USER`, `STRATO_SFTP_PASSWORD`, `STRATO_SFTP_PATH` (Zielordner, z. B. `/schauspielgruppe`).
+2. Im Strato-Kundenlogin einen **SFTP-Zugang** anlegen (ab Paket „Hosting Starter“) und einen **eigenen, leeren Ordner** für die Website, auf den die Domain zeigt.
+   **Wichtig:** Der Upload spiegelt `dist/` und löscht im Zielordner alles, was nicht dazugehört.
+3. SSL aktivieren. Die `.htaccess` leitet auf HTTPS um und alte WordPress-Adressen auf die neuen Seiten (wirkt nur bei Strato, nicht bei GitHub Pages).
+4. In `strato.yml` die Auslöser unter `on:` wieder einkommentieren und `pages.yml` löschen.
 
 ### 3. Pages CMS
 
@@ -77,7 +82,7 @@ Jeder Push auf `main` (auch jede Speicherung in Pages CMS) startet *Actions › 
 - [ ] Fotos in besserer Auflösung übernehmen (die aktuellen Archivfotos sind nur Vorschaubilder mit 240 × 160 px).
 - [ ] Ticketshop eintragen (Einstellungen › Link zum Ticketshop), sobald klar ist, welcher Anbieter genutzt wird.
 - [ ] Eintrittspreise eintragen (Einstellungen › Eintrittspreise).
-- [ ] **Datenschutzerklärung prüfen lassen.** Sie ist ein Entwurf für die neue Seite (kein Google Analytics mehr, Hosting bei Strato, keine Cookies).
+- [ ] **Datenschutzerklärung prüfen lassen.** Sie ist ein Entwurf für die neue Seite (kein Google Analytics mehr, keine Cookies). Hosting-Angabe anpassen: vorerst GitHub Pages (GitHub Inc., USA), später ggf. Strato.
 - [ ] Impressum prüfen. Der Verweis auf den alten § 55 RStV wurde auf § 18 Abs. 2 MStV aktualisiert.
 
 ## Technik
