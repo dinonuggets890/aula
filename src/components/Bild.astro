@@ -1,0 +1,21 @@
+---
+import { Picture } from 'astro:assets';
+import { bildMeta } from '../lib/data';
+
+interface Props {
+  src: string;
+  alt: string;
+  sizes?: string;
+  widths?: number[];
+  loading?: 'lazy' | 'eager';
+}
+const { src, alt, sizes = '(max-width: 600px) 100vw, 33vw', widths = [320, 640, 960, 1440], loading = 'lazy' } = Astro.props;
+const meta = bildMeta(src);
+// Nicht über die Originalgröße hinaus skalieren
+const passende = meta ? [...new Set([...widths.filter((w) => w < meta.width), meta.width])] : [];
+---
+{meta ? (
+  <Picture src={meta} alt={alt} widths={passende} sizes={sizes} formats={['avif', 'webp']} loading={loading} decoding="async" />
+) : src ? (
+  <img src={src} alt={alt} loading={loading} decoding="async" />
+) : null}

@@ -1,0 +1,41 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  src: string;
+  poster?: string;
+  format?: 'hoch' | 'quer';
+  titel?: string;
+  kicker?: string;
+  klein?: boolean;
+}
+const { src, poster = '', format = 'hoch', titel = '', kicker = '', klein = false } = Astro.props;
+---
+<div class:list={['video', 'grain', `video--${format}`]} data-video>
+  <video src={src} poster={poster || undefined} preload="metadata" playsinline controls={false}>
+    Ihr Browser kann dieses Video nicht abspielen.
+  </video>
+  <button class="video__start" type="button" aria-label={titel ? `Video abspielen: ${titel}` : 'Video abspielen'}>
+    <span class="knopf"><Icon name="play" size={klein ? 20 : 34} /></span>
+    {!klein && (titel || kicker) && (
+      <span class="video__titel">
+        {kicker && <span class="kicker">{kicker}</span>}
+        {titel && <b>{titel}</b>}
+      </span>
+    )}
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-video]').forEach((box) => {
+    const video = box.querySelector('video');
+    const start = box.querySelector<HTMLButtonElement>('.video__start');
+    if (!video || !start) return;
+    start.addEventListener('click', () => {
+      box.classList.add('spielt');
+      video.controls = true;
+      video.play().catch(() => {});
+      video.focus();
+    });
+  });
+</script>

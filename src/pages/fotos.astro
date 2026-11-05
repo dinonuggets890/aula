@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import Bild from '../components/Bild.astro';
+import { fotos } from '../lib/data';
+---
+<Base titel="Fotoalbum" aktiv="fotos" footerKompakt>
+  <section class="wrap seitenkopf" aria-labelledby="fotos-titel">
+    <p class="label">Fotoalbum</p>
+    <h1 id="fotos-titel" class="auftritt">
+      <span class="seitenkopf__gross">Fotos</span>
+      <span class="seitenkopf__serif">von der Bühne.</span>
+    </h1>
+  </section>
+  <div class="wrap" style="padding-bottom:clamp(72px,8vw,120px)">
+    <ul class="fotos fotos--gross">
+      {fotos.map((f) => (
+        <li>
+          <figure class="foto">
+            <span class="foto__bild"><Bild src={f.bild} alt={`Foto aus ${f.titel}`} sizes="(max-width: 600px) 100vw, 33vw" /></span>
+            <figcaption>{f.titel}{f.jahr ? ` · ${f.jahr}` : ''}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Base>

@@ -1,0 +1,36 @@
+---
+import Icon from './Icon.astro';
+import { fmt, type Termin } from '../lib/data';
+
+interface Props {
+  termin: Termin;
+}
+const { termin: t } = Astro.props;
+const beschriftung = `${fmt.wochentag(t.datum)}, ${fmt.tagMonat(t.datum)}, ${t.uhrzeit} Uhr`;
+---
+<li class:list={['ticket', { 'ticket--vorbei': t.vorbei }]} data-monat={t.monat}>
+  {t.premiere && <span class="stempel">Premiere</span>}
+  <div class="ticket__oben">
+    <p class="ticket__zeit">{fmt.wochentag(t.datum)} · {t.uhrzeit} Uhr</p>
+    <p class="ticket__datum">
+      <span class="ticket__tag">{fmt.tag(t.datum)}</span>
+      <span class="ticket__monat">{t.monat}</span>
+    </p>
+  </div>
+  <div class="ticket__perfo" aria-hidden="true"></div>
+  {t.vorbei ? (
+    <p class="ticket__link ticket__link--aus"><span>Gespielt</span></p>
+  ) : t.ausverkauft ? (
+    <p class="ticket__link ticket__link--aus"><span>Ausverkauft</span></p>
+  ) : (
+    <a
+      class="ticket__link"
+      href={t.href}
+      aria-label={`Karten für ${beschriftung}`}
+      target={t.extern ? '_blank' : undefined}
+      rel={t.extern ? 'noopener' : undefined}
+    >
+      <span>Karten</span><Icon name={t.extern ? 'extern' : 'pfeil'} />
+    </a>
+  )}
+</li>

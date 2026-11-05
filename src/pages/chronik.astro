@@ -1,0 +1,100 @@
+---
+import Base from '../layouts/Base.astro';
+import Bild from '../components/Bild.astro';
+import { getChronik } from '../lib/data';
+
+const eintraege = await getChronik();
+const stuecke = eintraege.filter((e) => e.art !== 'hinweis');
+const anzahl = { alle: stuecke.length, abendfuellend: stuecke.filter((e) => e.art === 'abendfuellend').length, klein: stuecke.filter((e) => e.art === 'klein').length };
+const erstesJahr = Math.min(...stuecke.map((e) => e.jahr));
+
+const jahrzehnte: { label: string; id: string; eintraege: typeof eintraege }[] = [];
+for (const e of eintraege) {
+  const dz = Math.floor(e.jahr / 10) * 10;
+  let gruppe = jahrzehnte.find((g) => g.id === `d${dz}`);
+  if (!gruppe) { gruppe = { label: `${dz}er`, id: `d${dz}`, eintraege: [] }; jahrzehnte.push(gruppe); }
+  gruppe.eintraege.push(e);
+}
+---
+<Base titel="Chronik" beschreibung={`Alle Produktionen der Schauspielgruppe Neusäß seit ${erstesJahr}.`} aktiv="chronik" footerKompakt>
+  <section class="wrap seitenkopf" aria-labelledby="chronik-titel">
+    <p class="label">Chronik</p>
+    <div class="kopfzeile">
+      <h1 id="chronik-titel" class="auftritt">
+        <span class="seitenkopf__gross">Alle Stücke</span>
+        <span class="seitenkopf__serif">seit {erstesJahr}.</span>
+      </h1>
+      <div class="zaehler">
+        <div class="zaehler__rahmen" aria-hidden="true"><span data-zaehler>{anzahl.alle}</span></div>
+        <p class="body-2" style="max-width:15em;font-size:16px;line-height:1.45">Einträge in der Chronik, von abendfüllenden Inszenierungen bis zu kleinen Stücken mit Kindern.</p>
+      </div>
+    </div>
+    <div class="filterleiste">
+      <div class="chips" role="group" aria-label="Nach Art filtern" data-artfilter>
+        <button class="chip" type="button" aria-pressed="true" data-art="">Alle <small>{anzahl.alle}</small></button>
+        <button class="chip" type="button" aria-pressed="false" data-art="abendfuellend">Abendfüllende Stücke <small>{anzahl.abendfuellend}</small></button>
+        <button class="chip" type="button" aria-pressed="false" data-art="klein">Kleine Stücke und Kinder <small>{anzahl.klein}</small></button>
+      </div>
+      <nav class="springen" aria-label="Zu Jahrzehnt springen">
+        <span class="kicker" style="margin-right:8px">Springen zu</span>
+        {jahrzehnte.map((g) => <a href={`#${g.id}`}>{g.label}</a>)}
+      </nav>
+    </div>
+  </section>
+
+  <div class="wrap jahrzehnte">
+    {jahrzehnte.map((g) => (
+      <section class="jahrzehnt" id={g.id} aria-labelledby={`${g.id}-t`} data-jahrzehnt>
+        <div class="jahrzehnt__kopf">
+          <h2 id={`${g.id}-t`}>{g.label}</h2>
+          <p class="klein" style="font-weight:600"><span data-anzahl>{g.eintraege.filter((e) => e.art !== 'hinweis').length}</span> Einträge</p>
+        </div>
+        <ul class="jahrzehnt__raster">
+          {g.eintraege.map((e) =>
+            e.art === 'hinweis' ? (
+              <li class="eintrag eintrag--hinweis" data-art="hinweis">
+                <b>{e.info || e.jahr}</b>
+                <span>{e.titel}</span>
+              </li>
+            ) : (
+              <li class="eintrag" data-art={e.art}>
+                {e.bild && <span class="foto__bild"><Bild src={e.bild} alt={`Foto aus ${e.titel}`} sizes="(max-width: 600px) 100vw, 220px" /></span>}
+                <p class="eintrag__kopf">
+                  <span class="eintrag__jahr">{e.jahr}</span>
+                  <span class:list={['tag', { 'tag--voll': e.art === 'abendfuellend' }]}>{e.art === 'klein' ? 'Kleines Stück' : 'Abendfüllend'}</span>
+                </p>
+                <h3>{e.titel}</h3>
+                {e.info && <p>{e.info}</p>}
+              </li>
+            ),
+          )}
+        </ul>
+      </section>
+    ))}
+  </div>
+</Base>
+
+<script>
+  const filter = document.querySelector('[data-artfilter]');
+  const zaehler = document.querySelector('[data-zaehler]');
+  filter?.querySelectorAll<HTMLButtonElement>('button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const art = btn.dataset.art;
+      filter.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      let gesamt = 0;
+      document.querySelectorAll<HTMLElement>('[data-jahrzehnt]').forEach((dz) => {
+        let n = 0;
+        dz.querySelectorAll<HTMLElement>('li[data-art]').forEach((li) => {
+          const passt = !art || li.dataset.art === art || li.dataset.art === 'hinweis';
+          li.hidden = !passt;
+          if (passt && li.dataset.art !== 'hinweis') n++;
+        });
+        const anz = dz.querySelector('[data-anzahl]');
+        if (anz) anz.textContent = String(n);
+        dz.hidden = n === 0;
+        gesamt += n;
+      });
+      if (zaehler) zaehler.textContent = String(gesamt);
+    });
+  });
+</script>

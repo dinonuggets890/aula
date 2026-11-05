@@ -1,0 +1,19 @@
+---
+interface Props {
+  name: 'pfeil' | 'zurueck' | 'play' | 'download' | 'extern' | 'menu' | 'schliessen';
+  size?: number;
+}
+const { name, size = 18 } = Astro.props;
+---
+{name === 'play' ? (
+  <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+) : (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square" aria-hidden="true">
+    {name === 'pfeil' && <><path d="M4 12h15" /><path d="M13 6l6 6-6 6" /></>}
+    {name === 'zurueck' && <><path d="M20 12H5" /><path d="M11 6l-6 6 6 6" /></>}
+    {name === 'download' && <><path d="M12 4v11" /><path d="M7 10l5 5 5-5" /><path d="M5 20h14" /></>}
+    {name === 'extern' && <><path d="M7 17L17 7" /><path d="M9 7h8v8" /></>}
+    {name === 'menu' && <><path d="M3 7h18" /><path d="M3 12h18" /><path d="M3 17h12" /></>}
+    {name === 'schliessen' && <><path d="M5 5l14 14" /><path d="M19 5L5 19" /></>}
+  </svg>
+)}

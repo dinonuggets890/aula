@@ -1,0 +1,24 @@
+{
+  "seitentitel": "Schauspielgruppe Neusäß e.V.",
+  "beschreibung": "Die Schauspielgruppe Neusäß e.V. spielt seit 1975 Theater in Neusäß: abendfüllende Stücke mit Erwachsenen und kleine Stücke mit Kindern.",
+  "email": "info@schauspielgruppe-neusaess.de",
+  "vorsitz": [
+    { "rolle": "1. Vorsitzender", "name": "Hugo W. Ritter" },
+    { "rolle": "2. Vorsitzende", "name": "Sandra Wilke" }
+  ],
+  "spielort_name": "Aula der Grundschule bei St. Ägidius",
+  "spielort_kurz": "Aula, Grundschule St. Ägidius",
+  "spielort_strasse": "Bürgermeister-Kaifer-Str. 8",
+  "spielort_ort": "86356 Neusäß",
+  "spielort_karte": "https://www.openstreetmap.org/search?query=B%C3%BCrgermeister-Kaifer-Stra%C3%9Fe%208%2C%2086356%20Neus%C3%A4%C3%9F",
+  "vorverkauf_ab": "2026-02-06",
+  "vorverkauf_stellen": "Online und bei Bücher Max, Neusäß",
+  "preise": "",
+  "ticketshop_url": "",
+  "ticketshop_einbetten": false,
+  "ticketshop_hinweis": "Informationen zum Online-Kartenverkauf folgen. Karten gibt es außerdem im Vorverkauf bei Bücher Max in Neusäß.",
+  "buehnenflaechen": "dunkel",
+  "registergericht": "Amtsgericht Augsburg",
+  "registernummer": "VR 1605",
+  "verband": "Mitglied im Verband Bayerischer Amateurtheater e.V."
+}

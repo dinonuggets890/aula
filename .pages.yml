@@ -1,0 +1,383 @@
+# Pages CMS · Konfiguration für die Website der Schauspielgruppe Neusäß e.V.
+# Doku: https://pagescms.org/docs/configuration/
+
+media:
+  - name: bilder
+    label: Bilder
+    input: src/assets/uploads
+    output: /uploads
+    extensions: [jpg, jpeg, png, webp, avif]
+    rename: safe
+  - name: dateien
+    label: Dateien (PDF, Video)
+    input: public/dateien
+    output: /dateien
+    extensions: [pdf, mp4, webm, mov]
+    rename: safe
+
+content:
+  - name: programm
+    label: Programm
+    type: group
+    items:
+      - name: stuecke
+        label: Stücke
+        type: collection
+        path: src/content/stuecke
+        format: yaml-frontmatter
+        filename: "{year}-{primary}.md"
+        fields:
+          - name: titel
+            label: Titel
+            type: string
+            required: true
+          - name: aktuell
+            label: Aktuelles Stück
+            description: Wird oben auf der Startseite gezeigt. Immer nur bei einem Stück aktivieren.
+            type: boolean
+            default: false
+          - name: titel_zeile1
+            label: Titel, Zeile 1 (Schreibschrift)
+            description: Optional, z. B. „Die zwölf“. Leer lassen, wenn der Titel in einer Zeile stehen soll.
+            type: string
+          - name: titel_zeile2
+            label: Titel, Zeile 2 (groß)
+            description: Z. B. „Geschworenen“. Leer lassen, dann wird der ganze Titel groß gezeigt.
+            type: string
+          - name: rahmen_text
+            label: Text im roten Rahmen
+            description: Optional, kurz halten (z. B. „12“).
+            type: string
+          - name: autor
+            label: Autor
+            type: string
+          - name: regie
+            label: Regie
+            type: string
+          - name: genre
+            label: Genre
+            type: string
+          - name: art
+            label: Art
+            type: select
+            default: abendfuellend
+            options:
+              values:
+                - name: abendfuellend
+                  label: Abendfüllendes Stück
+                - name: klein
+                  label: Kleines Stück / mit Kindern
+          - name: kurztext
+            label: Kurzbeschreibung (Startseite)
+            type: text
+          - name: zitat
+            label: Inhalt in einem Absatz
+            description: Wird groß in Schreibschrift gezeigt.
+            type: text
+          - name: body
+            label: Weitere Beschreibung
+            type: rich-text
+          - name: bild
+            label: Szenenfoto
+            description: Wird gezeigt, wenn kein Trailer hochgeladen ist.
+            type: image
+            options:
+              media: bilder
+          - name: trailer
+            label: Trailer (Video)
+            description: MP4, möglichst unter 50 MB.
+            type: file
+            options:
+              media: dateien
+              extensions: [mp4, webm, mov]
+          - name: trailer_poster
+            label: Vorschaubild zum Trailer
+            type: image
+            options:
+              media: bilder
+          - name: trailer_format
+            label: Format des Trailers
+            type: select
+            default: hoch
+            options:
+              values:
+                - name: hoch
+                  label: Hochformat (Handy)
+                - name: quer
+                  label: Querformat
+          - name: behind_the_scenes
+            label: Behind-the-Scenes-Video
+            type: file
+            options:
+              media: dateien
+              extensions: [mp4, webm, mov]
+          - name: behind_the_scenes_text
+            label: Text zum Behind-the-Scenes-Video
+            type: string
+          - name: flyer
+            label: Flyer (PDF)
+            type: file
+            options:
+              media: dateien
+              extensions: [pdf]
+          - name: ticket_url
+            label: Ticket-Link für alle Termine
+            description: Link zum Ticketshop. Optional, sonst gilt der Link aus den Einstellungen.
+            type: string
+          - name: spielplan_titel
+            label: Überschrift im Spielplan
+            description: Z. B. „Zehn Abende. Zwölf Geschworene. Ein Urteil.“ Jeder Satz kommt in eine eigene Zeile.
+            type: string
+          - name: termine
+            label: Termine
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{datum} · {uhrzeit} Uhr"
+            fields:
+              - name: datum
+                label: Datum
+                type: date
+                required: true
+                options:
+                  format: yyyy-MM-dd
+              - name: uhrzeit
+                label: Uhrzeit
+                type: string
+                default: "19:30"
+                pattern:
+                  regex: "^\\d{2}:\\d{2}$"
+                  message: "Bitte als HH:MM eingeben, z. B. 19:30"
+              - name: premiere
+                label: Premiere
+                type: boolean
+                default: false
+              - name: ausverkauft
+                label: Ausverkauft
+                type: boolean
+                default: false
+              - name: ticket_url
+                label: Ticket-Link nur für diesen Termin
+                description: Optional.
+                type: string
+
+  - name: verein-gruppe
+    label: Verein
+    type: group
+    items:
+      - name: verein
+        label: Über uns und Mitmachen
+        type: file
+        path: src/data/verein.json
+        format: json
+        fields:
+          - name: ueberschrift
+            label: Überschrift
+            type: string
+          - name: ueberschrift_rot
+            label: Überschrift, roter Teil
+            type: string
+          - name: text
+            label: Text „Über uns“
+            description: Absätze mit einer Leerzeile trennen.
+            type: text
+          - name: zahlen
+            label: Zahlen
+            type: object
+            list:
+              max: 4
+            fields:
+              - name: wert
+                label: Zahl
+                type: string
+              - name: text
+                label: Beschriftung
+                type: string
+          - name: mitmachen_titel
+            label: Mitmachen, Überschrift
+            type: string
+          - name: mitmachen_titel_kursiv
+            label: Mitmachen, Überschrift kursiv
+            type: string
+          - name: mitmachen_text
+            label: Mitmachen, Text
+            type: text
+          - name: mitmachen_hinweis
+            label: Mitmachen, Hinweis
+            type: text
+          - name: mitgliedsantrag
+            label: Mitgliedsantrag (PDF)
+            type: file
+            options:
+              media: dateien
+              extensions: [pdf]
+          - name: datenschutz_anlage
+            label: Anlage Datenschutz (PDF)
+            type: file
+            options:
+              media: dateien
+              extensions: [pdf]
+          - name: junges_theater_titel
+            label: Junges Theater, Überschrift
+            type: string
+          - name: junges_theater_text
+            label: Junges Theater, Text
+            type: text
+
+      - name: chronik
+        label: Chronik
+        type: file
+        path: src/data/chronik.json
+        format: json
+        list: true
+        fields:
+          - name: jahr
+            label: Jahr
+            type: number
+            required: true
+          - name: titel
+            label: Titel
+            type: string
+            required: true
+          - name: art
+            label: Art
+            type: select
+            default: abendfuellend
+            options:
+              values:
+                - name: abendfuellend
+                  label: Abendfüllendes Stück
+                - name: klein
+                  label: Kleines Stück / mit Kindern
+                - name: hinweis
+                  label: Hinweis (z. B. Pause)
+          - name: info
+            label: Info (Autor, Regie)
+            type: string
+          - name: bild
+            label: Foto
+            type: image
+            options:
+              media: bilder
+
+      - name: fotos
+        label: Fotoalbum
+        type: file
+        path: src/data/fotos.json
+        format: json
+        list: true
+        fields:
+          - name: bild
+            label: Foto
+            type: image
+            required: true
+            options:
+              media: bilder
+          - name: titel
+            label: Stück
+            type: string
+          - name: jahr
+            label: Jahr
+            type: number
+
+  - name: website
+    label: Website
+    type: group
+    items:
+      - name: einstellungen
+        label: Einstellungen
+        type: file
+        path: src/data/einstellungen.json
+        format: json
+        fields:
+          - name: seitentitel
+            label: Name des Vereins
+            type: string
+          - name: beschreibung
+            label: Beschreibung für Suchmaschinen
+            type: text
+          - name: email
+            label: E-Mail
+            type: string
+          - name: vorsitz
+            label: Vorstand
+            type: object
+            list: true
+            fields:
+              - name: rolle
+                label: Funktion
+                type: string
+              - name: name
+                label: Name
+                type: string
+          - name: spielort_name
+            label: Spielort
+            type: string
+          - name: spielort_kurz
+            label: Spielort, kurz
+            type: string
+          - name: spielort_strasse
+            label: Straße
+            type: string
+          - name: spielort_ort
+            label: PLZ und Ort
+            type: string
+          - name: spielort_karte
+            label: Link zur Karte
+            type: string
+          - name: vorverkauf_ab
+            label: Vorverkauf ab
+            type: date
+            options:
+              format: yyyy-MM-dd
+          - name: vorverkauf_stellen
+            label: Vorverkaufsstellen
+            type: string
+          - name: preise
+            label: Eintrittspreise
+            description: Z. B. „12 €, ermäßigt 8 €“. Leer lassen, wenn keine Preise gezeigt werden sollen.
+            type: string
+          - name: ticketshop_url
+            label: Link zum Ticketshop
+            type: string
+          - name: ticketshop_einbetten
+            label: Ticketshop auf der Kartenseite einbetten
+            description: Nur aktivieren, wenn der Anbieter das Einbetten erlaubt.
+            type: boolean
+          - name: ticketshop_hinweis
+            label: Hinweis, solange kein Ticketshop eingebettet ist
+            type: text
+          - name: buehnenflaechen
+            label: Bühnenflächen (Startseite, Spielplan)
+            type: select
+            default: dunkel
+            options:
+              values:
+                - name: dunkel
+                  label: Dunkel
+                - name: hell
+                  label: Cremefarben
+          - name: registergericht
+            label: Registergericht
+            type: string
+          - name: registernummer
+            label: Registernummer
+            type: string
+          - name: verband
+            label: Verband
+            type: string
+
+      - name: seiten
+        label: Impressum und Datenschutz
+        type: collection
+        path: src/content/seiten
+        format: yaml-frontmatter
+        fields:
+          - name: titel
+            label: Titel
+            type: string
+            required: true
+          - name: body
+            label: Text
+            type: rich-text

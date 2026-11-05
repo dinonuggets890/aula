@@ -1,0 +1,20 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+// Impressum, Datenschutz und weitere Textseiten aus src/content/seiten
+export async function getStaticPaths() {
+  const seiten = await getCollection('seiten');
+  return seiten.map((seite) => ({ params: { seite: seite.id }, props: { seite } }));
+}
+const { seite } = Astro.props;
+const { Content } = await render(seite);
+---
+<Base titel={seite.data.titel} footerKompakt>
+  <section class="wrap seitenkopf" aria-labelledby="seiten-titel">
+    <h1 id="seiten-titel"><span class="seitenkopf__gross" style="font-size:clamp(52px,9vw,128px)">{seite.data.titel}</span></h1>
+  </section>
+  <div class="wrap">
+    <div class="prosa-seite"><Content /></div>
+  </div>
+</Base>

@@ -1,0 +1,41 @@
+---
+import { site } from '../lib/data';
+
+interface Props {
+  kompakt?: boolean;
+}
+const { kompakt = false } = Astro.props;
+const jahr = new Date().getFullYear();
+---
+<footer class:list={['fuss', { 'fuss--kompakt': kompakt }]}>
+  <div class="wrap fuss__inner">
+    {!kompakt && <p class="fuss__gross" aria-hidden="true">Vorhang auf<span class="rot">.</span></p>}
+    <div class="fuss__mitte">
+      <img src="/img/logo-weiss.svg" alt="Die Aula, Schauspielgruppe Neusäß e.V." width="859" height="296" loading="lazy" />
+      <nav class="fuss__nav" aria-label="Fußzeile">
+        <div>
+          <p class="kicker">Programm</p>
+          <a href="/#spielplan">Spielplan</a>
+          <a href="/#stueck">Das Stück</a>
+          <a href="/karten/">Karten</a>
+        </div>
+        <div>
+          <p class="kicker">Verein</p>
+          <a href="/#verein">Über uns</a>
+          <a href="/chronik/">Chronik</a>
+          <a href="/fotos/">Fotoalbum</a>
+          <a href="/#mitmachen">Mitgliedschaft</a>
+        </div>
+        <div>
+          <p class="kicker">Rechtliches</p>
+          <a href="/impressum/">Impressum</a>
+          <a href="/datenschutz/">Datenschutz</a>
+        </div>
+      </nav>
+    </div>
+    <div class="fuss__unten">
+      <p>© {jahr} {site.seitentitel} · {site.registergericht}, {site.registernummer}</p>
+      <p>{site.verband}</p>
+    </div>
+  </div>
+</footer>

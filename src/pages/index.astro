@@ -1,0 +1,349 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Bild from '../components/Bild.astro';
+import Video from '../components/Video.astro';
+import TicketKarte from '../components/TicketKarte.astro';
+import {
+  site, club, fotos, fmt, heuteISO, mailto, dateiDa, isoMitZone,
+  getAktuellesStueck, getChronik, termineVon,
+} from '../lib/data';
+
+const heute = heuteISO();
+const stueck = await getAktuellesStueck();
+const d = stueck?.data;
+const termine = stueck ? termineVon(stueck) : [];
+const kommend = termine.filter((t) => !t.vorbei);
+const premiere = termine.find((t) => t.premiere) ?? termine[0];
+const erste = termine[0];
+const letzte = termine.at(-1);
+const naechste = kommend[0];
+const monate = [...new Set(kommend.map((t) => t.monat))];
+const { Content } = stueck ? await render(stueck) : { Content: null };
+
+const zeile1 = d?.titel_zeile1 || '';
+const zeile2 = d?.titel_zeile2 || (zeile1 ? '' : d?.titel || '');
+const langerTitel = zeile2.length > 14 && !zeile1;
+
+let heroHinweis = '';
+if (premiere && premiere.datum >= heute) heroHinweis = `Premiere am ${fmt.mittel(premiere.datum)}`;
+else if (naechste) heroHinweis = `Nächste Vorstellung am ${fmt.mittel(naechste.datum)}`;
+else if (letzte) heroHinweis = `Gespielt bis ${fmt.mittel(letzte.datum)}`;
+
+const spielzeit = erste && letzte
+  ? erste.datum === letzte.datum ? fmt.mittel(erste.datum) : `${fmt.tagMonat(erste.datum)} bis ${fmt.mittel(letzte.datum)}`
+  : '';
+
+const vorverkaufKommt = site.vorverkauf_ab && site.vorverkauf_ab > heute;
+const laufband = [
+  d?.titel,
+  d?.autor && `von ${d.autor}`,
+  naechste && (naechste.premiere ? `Premiere ${fmt.tagMonat(naechste.datum)}` : `Nächste Vorstellung ${fmt.tagMonat(naechste.datum)}`),
+  site.spielort_kurz,
+  vorverkaufKommt && `Vorverkauf ab ${fmt.tagMonat(site.vorverkauf_ab)}`,
+  d?.regie && `Regie ${d.regie}`,
+].filter(Boolean) as string[];
+
+const trailerDa = !!d && dateiDa(d.trailer);
+const btsDa = !!d && dateiDa(d.behind_the_scenes);
+const flyerDa = !!d && dateiDa(d.flyer);
+const chronik = (await getChronik()).filter((e) => e.art !== 'hinweis').slice(0, 7);
+const antragDa = dateiDa(club.mitgliedsantrag);
+const anlageDa = dateiDa(club.datenschutz_anlage);
+
+const jsonLd = stueck && kommend.length
+  ? {
+      '@context': 'https://schema.org',
+      '@graph': kommend.map((t) => ({
+        '@type': 'TheaterEvent',
+        name: d!.titel,
+        startDate: isoMitZone(t.datum, t.uhrzeit),
+        eventStatus: 'https://schema.org/EventScheduled',
+        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+        description: d!.kurztext || undefined,
+        location: {
+          '@type': 'Place',
+          name: site.spielort_name,
+          address: { '@type': 'PostalAddress', streetAddress: site.spielort_strasse, addressLocality: site.spielort_ort.replace(/^\d+\s*/, ''), postalCode: site.spielort_ort.match(/^\d+/)?.[0], addressCountry: 'DE' },
+        },
+        organizer: { '@type': 'PerformingGroup', name: site.seitentitel, url: Astro.site?.toString() },
+        offers: t.extern ? { '@type': 'Offer', url: t.href, availability: t.ausverkauft ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock' } : undefined,
+      })),
+    }
+  : null;
+---
+<Base jsonLd={jsonLd}>
+  <!-- Bühne: aktuelles Stück -->
+  <section class="hero-rahmen" aria-labelledby="hero-titel">
+    <div class="stage grain hero">
+      <div class="licht" aria-hidden="true"></div>
+      {stueck ? (
+        <>
+          <div class="hero__oben">
+            <p class="label">Aktuelle Produktion {erste ? fmt.jahr(erste.datum) : ''}</p>
+            {heroHinweis && <p>{heroHinweis}</p>}
+          </div>
+          <h1 id="hero-titel" class="hero__titel">
+            <span class="hero__zeile1">
+              {zeile1 && <span class="hero__serif auftritt">{zeile1}</span>}
+              {d!.rahmen_text && <span class="rahmen auftritt" aria-hidden="true"><span>{d!.rahmen_text}</span></span>}
+            </span>
+            {zeile2 && <span class:list={['hero__gross', 'auftritt', 'auftritt--2', { 'hero__gross--lang': langerTitel }]}>{zeile2}</span>}
+          </h1>
+          <div class="hero__unten">
+            <div>
+              {d!.autor && <p class="hero__autor">von {d!.autor}</p>}
+              {d!.kurztext && <p class="hero__text lead pretty">{d!.kurztext}</p>}
+            </div>
+            <div class="hero__aktionen">
+              <a class="btn btn--rot" href="#spielplan">{kommend.length ? 'Karten sichern' : 'Zum Spielplan'}<Icon name="pfeil" /></a>
+              {trailerDa && <a class="btn btn--ghost" href="#stueck"><Icon name="play" size={18} />Trailer ansehen</a>}
+            </div>
+          </div>
+          <dl class="fakten">
+            {premiere && <div><dt>Premiere</dt><dd>{fmt.langKurz(premiere.datum)}, {premiere.uhrzeit} Uhr</dd></div>}
+            {spielzeit && <div><dt>Spielzeit</dt><dd>{spielzeit}</dd></div>}
+            <div><dt>Spielort</dt><dd>{site.spielort_kurz}</dd></div>
+            {d!.regie && <div><dt>Regie</dt><dd>{d!.regie}</dd></div>}
+          </dl>
+        </>
+      ) : (
+        <>
+          <div class="hero__oben"><p class="label">{site.seitentitel}</p></div>
+          <h1 id="hero-titel" class="hero__titel">
+            <span class="hero__serif auftritt">Theater</span>
+            <span class="hero__gross auftritt auftritt--2">aus Neusäß</span>
+          </h1>
+          <div class="hero__unten">
+            <p class="hero__text lead">Unsere nächste Produktion ist in Vorbereitung. Neue Termine folgen.</p>
+            <div class="hero__aktionen"><a class="btn btn--rot" href="/chronik/">Zur Chronik<Icon name="pfeil" /></a></div>
+          </div>
+        </>
+      )}
+    </div>
+  </section>
+
+  {laufband.length > 0 && (
+    <div class="laufband-huelle" aria-hidden="true">
+      <div class="laufband">
+        <div class="laufband__spur">
+          {[0, 1].map(() => (
+            <div class="laufband__gruppe">
+              {laufband.map((eintrag) => <><span>{eintrag}</span><i></i></>)}
+              {laufband.map((eintrag) => <><span>{eintrag}</span><i></i></>)}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )}
+
+  {stueck && (
+    <section id="stueck" class="wrap abschnitt" aria-labelledby="stueck-titel">
+      <p class="label" style="margin-bottom:32px">Das Stück</p>
+      <div class="zwei-spalten" style="align-items:start">
+        <div class="stapel">
+          {d!.zitat
+            ? <h2 id="stueck-titel" class="zitat">„{d!.zitat}“</h2>
+            : <h2 id="stueck-titel" class="display h-l">{d!.titel}</h2>}
+          {Content && <div class="prosa"><Content /></div>}
+          <dl class="infos">
+            {d!.autor && <div><dt>Autor</dt><dd>{d!.autor}</dd></div>}
+            {d!.regie && <div><dt>Regie</dt><dd>{d!.regie}</dd></div>}
+            {d!.genre && <div><dt>Genre</dt><dd>{d!.genre}</dd></div>}
+          </dl>
+          {flyerDa && (
+            <a class="pfeil-link pfeil-link--linie" href={d!.flyer} download><Icon name="download" />Flyer herunterladen (PDF)</a>
+          )}
+        </div>
+        {(trailerDa || btsDa || d!.bild) && (
+          <div class="stapel" style="gap:20px">
+            {trailerDa ? (
+              <Video src={d!.trailer} poster={d!.trailer_poster} format={d!.trailer_format} titel={d!.titel} kicker="Trailer" />
+            ) : d!.bild ? (
+              <div class="foto__bild" style="aspect-ratio:4/3;background:none"><Bild src={d!.bild} alt={`Szenenfoto aus ${d!.titel}`} sizes="(max-width: 600px) 100vw, 50vw" /></div>
+            ) : null}
+            {btsDa && (
+              <div class="bts">
+                <Video src={d!.behind_the_scenes} format="hoch" klein titel="Behind the Scenes" />
+                <div class="stapel stapel--eng" style="gap:4px">
+                  <p class="kicker rot">Behind the Scenes</p>
+                  <p style="font-size:17px;font-weight:600;line-height:1.35">{d!.behind_the_scenes_text}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  {stueck && termine.length > 0 && (
+    <section id="spielplan" class="stage spielplan" aria-labelledby="spielplan-titel">
+      <div class="wrap spielplan__inner">
+        <div class="kopfzeile">
+          <div class="stapel">
+            <p class="label">Spielplan und Karten</p>
+            <h2 id="spielplan-titel" class="display h-l">
+              {kommend.length && d!.spielplan_titel
+                ? d!.spielplan_titel.split(/(?<=\.)\s+/).map((satz, i) => <>{i > 0 && <br />}{satz}</>)
+                : 'Spielplan'}
+            </h2>
+          </div>
+          {monate.length > 1 && (
+            <div class="chips" role="group" aria-label="Termine nach Monat filtern" data-monatsfilter>
+              <button class="chip" type="button" aria-pressed="true" data-monat="">Alle Termine</button>
+              {monate.map((m) => <button class="chip" type="button" aria-pressed="false" data-monat={m}>{m}</button>)}
+            </div>
+          )}
+        </div>
+
+        {kommend.length === 0 && (
+          <div class="hinweis-box">
+            <p class="serif">Die Vorstellungen von „{d!.titel}“ sind vorbei.</p>
+            <p style="color:var(--s-text)">Vielen Dank an alle Zuschauerinnen und Zuschauer. Neue Termine folgen.</p>
+          </div>
+        )}
+
+        <ul class="karten-raster" data-termine>
+          {(kommend.length ? kommend : termine).map((t) => <TicketKarte termin={t} />)}
+        </ul>
+
+        {kommend.length > 0 && (site.vorverkauf_stellen || site.preise) && (
+          <div class="infozeile">
+            {vorverkaufKommt && <div><p class="kicker">Vorverkauf</p><p>ab {fmt.mittel(site.vorverkauf_ab)}</p></div>}
+            {site.vorverkauf_stellen && <div><p class="kicker">Erhältlich</p><p>{site.vorverkauf_stellen}</p></div>}
+            {site.preise && <div><p class="kicker">Eintritt</p><p>{site.preise}</p></div>}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- Verein -->
+  <section id="verein" class="wrap abschnitt" style="display:flex;flex-direction:column;gap:clamp(56px,5.6vw,80px);padding-bottom:clamp(64px,6vw,88px)" aria-labelledby="verein-titel">
+    <div class="zwei-spalten" style="align-items:end;gap:40px clamp(40px,6vw,96px)">
+      <div class="stapel">
+        <p class="label">Über uns</p>
+        <h2 id="verein-titel" class="display h-xl">{club.ueberschrift} <span class="rot">{club.ueberschrift_rot}</span></h2>
+      </div>
+      <div class="prosa">
+        {club.text.split(/\n\s*\n/).map((absatz) => <p>{absatz}</p>)}
+      </div>
+    </div>
+    {club.zahlen?.length > 0 && (
+      <dl class="zahlen">
+        {club.zahlen.map((z) => <div><dt>{z.text}</dt><dd>{z.wert}</dd></div>)}
+      </dl>
+    )}
+    {fotos.length > 0 && (
+      <div class="stapel" style="gap:20px">
+        <div class="kopfzeile" style="align-items:baseline">
+          <h3 class="display" style="font-size:32px;font-weight:800;line-height:1">Aus dem Fotoalbum</h3>
+          <a class="pfeil-link" href="/fotos/">Alle Fotos<Icon name="pfeil" size={16} /></a>
+        </div>
+        <ul class="fotos">
+          {fotos.slice(0, 6).map((f) => (
+            <li>
+              <figure class="foto">
+                <span class="foto__bild"><Bild src={f.bild} alt={`Foto aus ${f.titel}`} sizes="(max-width: 600px) 50vw, 16vw" /></span>
+                <figcaption>{f.titel}{f.jahr ? ` · ${f.jahr}` : ''}</figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </section>
+
+  <!-- Chronik-Auszug -->
+  <section class="wrap" style="padding-bottom:clamp(88px,9.5vw,140px)" aria-labelledby="chronik-titel">
+    <div class="stapel" style="border-top:2px solid var(--linie-stark);padding-top:clamp(56px,5.6vw,80px);gap:40px">
+      <div class="kopfzeile">
+        <div class="stapel">
+          <p class="label">Chronik</p>
+          <h2 id="chronik-titel" class="display h-l">Zuletzt auf <span class="serif">unserer</span> Bühne</h2>
+        </div>
+        <a class="btn btn--rot" href="/chronik/">Alle Produktionen<Icon name="pfeil" /></a>
+      </div>
+      <ol class="zeilen">
+        {chronik.map((e) => (
+          <li>
+            <a class="zeile" href="/chronik/">
+              <span class="zeile__jahr">{e.jahr}</span>
+              <span class="zeile__titel">{e.titel}</span>
+              <span class="zeile__info">{e.info}</span>
+              <span class="zeile__art"><span class="tag">{e.art === 'klein' ? 'Kleines Stück' : 'Abendfüllend'}</span></span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Mitmachen -->
+  <section id="mitmachen" class="mitmachen" aria-labelledby="mitmachen-titel">
+    <img class="mitmachen__marke" src="/img/bildmarke-weiss.svg" alt="" aria-hidden="true" loading="lazy" />
+    <div class="wrap abschnitt zwei-spalten" style="position:relative;align-items:start">
+      <div class="stapel">
+        <p class="label label--hell">Mitmachen</p>
+        <h2 id="mitmachen-titel" class="display" style="font-size:clamp(60px,9.6vw,144px);line-height:.84">
+          {club.mitmachen_titel}<br /><span class="serif">{club.mitmachen_titel_kursiv}</span>
+        </h2>
+      </div>
+      <div class="stapel" style="padding-top:clamp(0px,3vw,44px)">
+        <p class="mitmachen__text">{club.mitmachen_text}</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          {antragDa && <a class="btn btn--papier" href={club.mitgliedsantrag} download><Icon name="download" />Mitgliedsantrag (PDF)</a>}
+          <a class="btn btn--ghost" href={mailto}>E-Mail schreiben</a>
+        </div>
+        <p class="klein">
+          {club.mitmachen_hinweis} E-Mail: <a href={mailto}>{site.email}</a>.
+          {anlageDa && <> Die <a href={club.datenschutz_anlage} download>Anlage zum Datenschutz (PDF)</a> gehört zum Antrag.</>}
+        </p>
+        {club.junges_theater_text && (
+          <div class="jt">
+            <p class="kicker">Junges Theater der SGN</p>
+            <h3>{club.junges_theater_titel}</h3>
+            <p>{club.junges_theater_text}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <!-- Spielort, Vorverkauf, Kontakt -->
+  <section id="kontakt" class="wrap abschnitt kontakt" aria-label="Spielort, Vorverkauf und Kontakt">
+    <div>
+      <p class="kicker rot">Spielort</p>
+      <h3>{site.spielort_name}</h3>
+      <p>{site.spielort_strasse}<br />{site.spielort_ort}</p>
+      {site.spielort_karte && <a class="pfeil-link" href={site.spielort_karte} target="_blank" rel="noopener">Route planen<Icon name="extern" size={16} /></a>}
+    </div>
+    <div>
+      <p class="kicker rot">Vorverkauf</p>
+      <h3>Karten</h3>
+      <p class="pretty">{site.vorverkauf_stellen}</p>
+      <a class="pfeil-link" href="/karten/">Zu den Karten<Icon name="pfeil" size={16} /></a>
+    </div>
+    <div>
+      <p class="kicker rot">Kontakt</p>
+      <h3>Schreiben Sie uns</h3>
+      <p><a href={mailto} style="color:var(--text);font-weight:600">{site.email}</a></p>
+      <p style="font-size:16px">{site.vorsitz.map((v, i) => <>{i > 0 && <br />}{v.rolle}: {v.name}</>)}</p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const filter = document.querySelector('[data-monatsfilter]');
+  const karten = document.querySelectorAll<HTMLElement>('[data-termine] > li');
+  filter?.querySelectorAll<HTMLButtonElement>('button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const monat = btn.dataset.monat;
+      filter.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      karten.forEach((k) => { k.hidden = !!monat && k.dataset.monat !== monat; });
+    });
+  });
+</script>

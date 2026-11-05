@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { site, fmt, getAktuellesStueck, termineVon } from '../lib/data';
+
+const stueck = await getAktuellesStueck();
+const d = stueck?.data;
+const kommend = stueck ? termineVon(stueck).filter((t) => !t.vorbei) : [];
+const shopUrl = site.ticketshop_url;
+const einbetten = !!shopUrl && site.ticketshop_einbetten;
+---
+<Base titel="Karten" beschreibung={d ? `Karten für ${d.titel}` : 'Karten'} aktiv="karten" footerKompakt>
+  <div class="wrap" style="padding-top:16px">
+    <a class="pfeil-link" href="/#spielplan" style="color:var(--text);font-weight:600;font-size:15px"><Icon name="zurueck" size={16} />Zurück zum Spielplan</a>
+  </div>
+  <div class="wrap karten-layout" style="padding-top:24px">
+    <section class="stage grain" aria-labelledby="karten-titel">
+      <div class="licht" aria-hidden="true"></div>
+      <div class="stapel stapel--eng">
+        <p class="label">Karten</p>
+        <h1 id="karten-titel" class="display" style="font-size:clamp(48px,5.4vw,80px);line-height:.86">{d ? d.titel : 'Karten'}</h1>
+        {d?.autor && <p class="serif" style="font-size:28px;line-height:1.1">von {d.autor}</p>}
+        <p class="klein" style="color:var(--s-muted)">{site.spielort_name}, {site.spielort_strasse}, {site.spielort_ort}</p>
+      </div>
+      {kommend.length ? (
+        <div class="stapel stapel--eng">
+          <p class="kicker">Vorstellungen</p>
+          <ul class="termin-liste">
+            {kommend.map((t) => (
+              <li>
+                <span>
+                  <b>{fmt.wochentagKurz(t.datum)}, {fmt.tag(t.datum)}.{t.datum.slice(5, 7)}.</b>
+                  <span class="klein" style="display:block">{t.uhrzeit} Uhr{t.premiere ? ' · Premiere' : ''}</span>
+                </span>
+                {t.ausverkauft ? (
+                  <span class="klein">Ausverkauft</span>
+                ) : t.extern ? (
+                  <a class="btn btn--rot btn--klein" href={t.href} target="_blank" rel="noopener">Karten<Icon name="extern" size={16} /></a>
+                ) : einbetten ? (
+                  <a class="btn btn--ghost btn--klein" href="#shop">Zum Ticketshop</a>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p class="serif" style="font-size:28px;line-height:1.15">Aktuell sind keine Vorstellungen geplant. Neue Termine folgen.</p>
+      )}
+    </section>
+
+    <section class="shop" id="shop" aria-label="Ticketshop">
+      {einbetten ? (
+        <iframe src={shopUrl} title="Ticketshop" loading="lazy" allow="payment"></iframe>
+      ) : (
+        <div class="shop-platzhalter">
+          <p class="kicker">Online-Kartenverkauf</p>
+          <p class="pretty" style="font-size:19px;max-width:32em">{site.ticketshop_hinweis}</p>
+          {shopUrl && <a class="btn btn--rot" href={shopUrl} target="_blank" rel="noopener" style="align-self:flex-start">Zum Ticketshop<Icon name="extern" /></a>}
+          {site.preise && <p class="klein">Eintritt: {site.preise}</p>}
+        </div>
+      )}
+    </section>
+  </div>
+</Base>

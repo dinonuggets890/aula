@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+<Base titel="Seite nicht gefunden" footerKompakt>
+  <section class="wrap seitenkopf" style="padding-bottom:clamp(88px,10vw,160px)">
+    <p class="label">Fehler 404</p>
+    <h1>
+      <span class="seitenkopf__gross">Falscher Auftritt</span>
+      <span class="seitenkopf__serif">Diese Seite gibt es nicht.</span>
+    </h1>
+    <a class="btn btn--rot" href="/" style="align-self:flex-start">Zur Startseite<Icon name="pfeil" /></a>
+  </section>
+</Base>

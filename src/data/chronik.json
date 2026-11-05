@@ -1,0 +1,702 @@
+[
+  {
+    "jahr": 2025,
+    "titel": "Ein Sommernachtstraum",
+    "art": "abendfuellend",
+    "info": "Regie: Helga Schuster",
+    "bild": ""
+  },
+  {
+    "jahr": 2024,
+    "titel": "Jedermann (stirbt!)",
+    "art": "abendfuellend",
+    "info": "Regie: Helga Schuster",
+    "bild": ""
+  },
+  {
+    "jahr": 2024,
+    "titel": "Licht an!",
+    "art": "klein",
+    "info": "Regie: Wolfgang H. Ritter",
+    "bild": ""
+  },
+  {
+    "jahr": 2023,
+    "titel": "Plötzlich und unerwartet",
+    "art": "abendfuellend",
+    "info": "von Francis Durbridge · Regie: Helga Schuster",
+    "bild": ""
+  },
+  {
+    "jahr": 2023,
+    "titel": "Das Gespenst von Canterville",
+    "art": "klein",
+    "info": "Regie: Wolfgang H. Ritter",
+    "bild": ""
+  },
+  {
+    "jahr": 2022,
+    "titel": "Romulus der Große",
+    "art": "abendfuellend",
+    "info": "Regie: Gianna Formicone und Nida Canataly-Zavrsek",
+    "bild": ""
+  },
+  {
+    "jahr": 2020,
+    "titel": "Keine Aufführungen wegen der Corona-Pandemie",
+    "art": "hinweis",
+    "info": "2020 bis 2021",
+    "bild": ""
+  },
+  {
+    "jahr": 2019,
+    "titel": "Dinner für Spinner",
+    "art": "abendfuellend",
+    "info": "Regie: Florian Kreis",
+    "bild": ""
+  },
+  {
+    "jahr": 2019,
+    "titel": "Der weiße Rabe",
+    "art": "klein",
+    "info": "Regie: W. H. Ritter",
+    "bild": ""
+  },
+  {
+    "jahr": 2018,
+    "titel": "Arsen und Spitzenhäubchen",
+    "art": "abendfuellend",
+    "info": "Regie: Florian Kreis",
+    "bild": ""
+  },
+  {
+    "jahr": 2017,
+    "titel": "Die Physiker",
+    "art": "abendfuellend",
+    "info": "Regie: Florian Kreis",
+    "bild": ""
+  },
+  {
+    "jahr": 2016,
+    "titel": "Ingeborg",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2015,
+    "titel": "Altweiberfrühling",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2014,
+    "titel": "Der Diener zweier Herren",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2014,
+    "titel": "Die kleinen Verwandten",
+    "art": "klein",
+    "info": "wiederaufgenommen",
+    "bild": ""
+  },
+  {
+    "jahr": 2014,
+    "titel": "Das Hemd des Glücklichen",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2013,
+    "titel": "Die Deutschen Kleinstädter",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": "/uploads/archiv/kleinstaedter-2013.jpg"
+  },
+  {
+    "jahr": 2013,
+    "titel": "Festakt zur 25-jährigen Stadterhebung Neusäß",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2013,
+    "titel": "„LiteraTour Neusäß“",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2013,
+    "titel": "Die kleinen Verwandten",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2012,
+    "titel": "Blütenträume",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": "/uploads/archiv/bluetentraeume-2012-1.jpg"
+  },
+  {
+    "jahr": 2012,
+    "titel": "Furcht und Elend des III. Reiches",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2012,
+    "titel": "Eine Weihnachtsfamilie",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2011,
+    "titel": "Knock oder der Triumph der Medizin",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2011,
+    "titel": "Die Laune des Verliebten",
+    "art": "klein",
+    "info": "(Weihnachtsabend gegen sechs)",
+    "bild": ""
+  },
+  {
+    "jahr": 2010,
+    "titel": "Hotel zu den zwei Welten",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2010,
+    "titel": "Der Prozess um des Esels Schatten",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2010,
+    "titel": "Weihnachten für Henkelmanns Kinder",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2009,
+    "titel": "Die gelehrten Frauen",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2009,
+    "titel": "Achtung Aufnahme",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2009,
+    "titel": "An allem ist die Katze Schuld",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2008,
+    "titel": "Ein idealer Gatte",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2008,
+    "titel": "Glück und Segen",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2008,
+    "titel": "Kein Zimmer frei im Stadthotel Bethlehem, USA",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2007,
+    "titel": "Der zerbrochene Krug",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2007,
+    "titel": "Das Kopftuch mit den roten Tupfen",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2007,
+    "titel": "Zwei Weihnachtsgeschenke",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2006,
+    "titel": "Helden",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2006,
+    "titel": "Denn ich bin ein Gast gewesen",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2005,
+    "titel": "Antigone",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": "/uploads/archiv/antigone-2005-1.jpg"
+  },
+  {
+    "jahr": 2005,
+    "titel": "Der Zwiebeldieb",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2005,
+    "titel": "Der Fest-Beststeller",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2004,
+    "titel": "Der Regenmacher",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2004,
+    "titel": "Mr. Silberlöffel",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2003,
+    "titel": "Ein Inspektor kommt",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2003,
+    "titel": "Die Bremer Stadtmusikanten",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2003,
+    "titel": "Das gerettete Weihnachtsfest",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2002,
+    "titel": "Gerüchte … Gerüchte",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2002,
+    "titel": "Nikolaus spielen ist schöner",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2001,
+    "titel": "Mein Freund Harvey",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2001,
+    "titel": "Moritz und das Rottoplott",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2000,
+    "titel": "Die Mausefalle",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2000,
+    "titel": "Der Heultopf",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 2000,
+    "titel": "Weihnachten für Henkelmanns Kinder",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1999,
+    "titel": "Tartuffe",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1999,
+    "titel": "Der weiße Rabe",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1999,
+    "titel": "Das rote Fahrrad",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1998,
+    "titel": "Unsere kleine Stadt",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1997,
+    "titel": "Spanische Rosen",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1997,
+    "titel": "Zur Rose und Krone",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1997,
+    "titel": "Annina stiehlt das Jesuskind",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1996,
+    "titel": "Die Zeit und die Conways",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1996,
+    "titel": "Till Eulenspiegel in Schneidershausen",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1995,
+    "titel": "Raub der Sabinerinnen",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1995,
+    "titel": "Weihnachtsabend gegen sechs",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1994,
+    "titel": "Bunbury",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1994,
+    "titel": "Heinzelmännchen? Nein, danke!",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1993,
+    "titel": "Biedermann und die Brandstifter",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1993,
+    "titel": "An langer Leine",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1992,
+    "titel": "Die Million-Pfund-Note",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1991,
+    "titel": "Der eingebildete Kranke",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1991,
+    "titel": "Die verzauberten Brüder",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1990,
+    "titel": "Die Spielverderber",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1990,
+    "titel": "Ach, du liebe Weihnachtszeit",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1989,
+    "titel": "Das Spinnennetz",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1988,
+    "titel": "Der Talisman",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1988,
+    "titel": "Angelos oder das Weihnachtsglöckchen",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1987,
+    "titel": "Die tote Tante / Das Märchen",
+    "art": "abendfuellend",
+    "info": "zwei Einakter",
+    "bild": ""
+  },
+  {
+    "jahr": 1987,
+    "titel": "Der Allefresser",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1986,
+    "titel": "Unsere kleine Stadt",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1986,
+    "titel": "Pünktchen und Anton",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1986,
+    "titel": "Komm, wir brüten ein Pony aus",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1985,
+    "titel": "Das Tagebuch der Anne Frank",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1985,
+    "titel": "Die Sache mit dem Hemd",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1983,
+    "titel": "Der Prozess Mary Dugan",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1983,
+    "titel": "Die Laune der Verliebten",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1983,
+    "titel": "Drei Säcke voller Lügen",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1983,
+    "titel": "Der Heultopf",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1983,
+    "titel": "Weihnachten für Henkelmanns Kinder",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1982,
+    "titel": "Die Warze",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1981,
+    "titel": "Freiheit in Krähwinkel",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1981,
+    "titel": "Der listige Schuster",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1981,
+    "titel": "Von der Königin, die keine Pfeffernüsse backen konnte",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1980,
+    "titel": "Heimatlos (Scharaden)",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1979,
+    "titel": "Robinson soll nicht sterben",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1979,
+    "titel": "Ein frohes Weihnachtsfest",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1978,
+    "titel": "Der Prozess um des Esels Schatten",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1978,
+    "titel": "Der weiße Rabe",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1977,
+    "titel": "Der schwarze Einser",
+    "art": "abendfuellend",
+    "info": "",
+    "bild": ""
+  },
+  {
+    "jahr": 1977,
+    "titel": "Pellkartoffeln mag ich nicht",
+    "art": "klein",
+    "info": "",
+    "bild": ""
+  }
+]

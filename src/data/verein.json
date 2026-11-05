@@ -1,0 +1,19 @@
+{
+  "ueberschrift": "Theater aus Neusäß.",
+  "ueberschrift_rot": "Seit 1975.",
+  "text": "Unsere Theatergruppe ist seit 1975 aktiv und seit 1989 als Verein tätig. Wir spielen abendfüllende Stücke mit Erwachsenen und kleine Stücke mit Kindern zu Sommerfesten und Weihnachtsfeiern.\n\nAußerdem sind wir Mitglied im Verband Bayerischer Amateurtheater e.V.",
+  "zahlen": [
+    { "wert": "1975", "text": "Theatergruppe aktiv seit" },
+    { "wert": "1989", "text": "als eingetragener Verein" },
+    { "wert": "80+", "text": "Mitglieder im Verein" },
+    { "wert": "80+", "text": "Produktionen auf der Bühne" }
+  ],
+  "mitmachen_titel": "Bühne frei.",
+  "mitmachen_titel_kursiv": "Für Sie.",
+  "mitmachen_text": "Unser Verein zählt über 80 Mitglieder, und neue Gesichter sind uns immer herzlich willkommen: auf der Bühne und hinter den Kulissen.",
+  "mitmachen_hinweis": "Den ausgefüllten Antrag einfach per E-Mail oder per Post an die Geschäftsstelle senden.",
+  "mitgliedsantrag": "/dateien/SGN_Mitgliedsantrag_2019.05.pdf",
+  "datenschutz_anlage": "/dateien/SGN_Nachtrag-I_zur-Satzung.pdf",
+  "junges_theater_titel": "Kleine Stücke, große Bühne",
+  "junges_theater_text": "Kinder und Jugendliche spielen bei uns kleine Stücke zu Sommerfesten und Weihnachtsfeiern. Zuletzt: „Licht an!“ (2024) und „Das Gespenst von Canterville“ (2023)."
+}

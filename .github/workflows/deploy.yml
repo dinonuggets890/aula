@@ -1,0 +1,48 @@
+# Baut die Website und lädt sie per SFTP auf den Strato-Webspace.
+# Läuft bei jeder Änderung (auch aus Pages CMS), täglich nachts
+# (damit vergangene Termine verschwinden) und auf Knopfdruck.
+#
+# Benötigte Secrets (GitHub > Settings > Secrets and variables > Actions):
+#   STRATO_SFTP_HOST      z. B. 5012345.ssh.w1.strato.hosting
+#   STRATO_SFTP_USER      Benutzername des SFTP-Zugangs
+#   STRATO_SFTP_PASSWORD  Passwort des SFTP-Zugangs
+#   STRATO_SFTP_PATH      Zielordner der Domain auf dem Webspace, z. B. /schauspielgruppe
+
+name: Website veröffentlichen
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Per SFTP auf Strato hochladen
+        env:
+          SFTP_HOST: ${{ secrets.STRATO_SFTP_HOST }}
+          SFTP_USER: ${{ secrets.STRATO_SFTP_USER }}
+          LFTP_PASSWORD: ${{ secrets.STRATO_SFTP_PASSWORD }}
+          ZIEL: ${{ secrets.STRATO_SFTP_PATH }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+          lftp -c "set sftp:auto-confirm yes; set net:max-retries 3;
+            open -u $SFTP_USER --env-password sftp://$SFTP_HOST;
+            mirror --reverse --delete --verbose --parallel=4 --exclude-glob .well-known/ dist/ $ZIEL"
