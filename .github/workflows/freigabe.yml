@@ -1,0 +1,52 @@
+# Übernimmt den aktuellen Stand von „vorschau“ nach „main“ (= freigegeben).
+# Starten: Actions › Vorschau freigeben › Run workflow.
+#
+# Es wird nur „vorgespult“ (fast-forward): Hat jemand direkt auf main etwas
+# geändert, das in der Vorschau fehlt, bricht die Freigabe mit Hinweis ab,
+# statt etwas zu überschreiben.
+#
+# Nach dem Umzug zu Strato: unter Settings › Secrets and variables › Actions ›
+# Variables die Variable LIVE_STRATO = true anlegen. Dann lädt die Freigabe
+# die Seite anschließend automatisch auf Strato hoch.
+
+name: Vorschau freigeben
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: freigabe
+  cancel-in-progress: false
+
+jobs:
+  freigeben:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: vorschau nach main übernehmen
+        run: |
+          git fetch origin vorschau main
+          if git merge-base --is-ancestor origin/vorschau origin/main; then
+            echo "::notice::Nichts zu tun: main ist bereits auf dem Stand der Vorschau."
+            exit 0
+          fi
+          if ! git merge-base --is-ancestor origin/main origin/vorschau; then
+            echo "::error::Auf main gibt es Änderungen, die in der Vorschau fehlen. Bitte erst main in vorschau übernehmen (Pull Request main → vorschau) und dann erneut freigeben."
+            exit 1
+          fi
+          echo "Folgende Änderungen werden freigegeben:"
+          git log --format='  • %s (%an, %ad)' --date=format:'%d.%m.%Y %H:%M' origin/main..origin/vorschau
+          git push origin origin/vorschau:refs/heads/main
+
+      - name: Live-Seite auf Strato aktualisieren
+        if: vars.LIVE_STRATO == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run strato.yml --ref main

@@ -1,7 +1,12 @@
-# Baut die Website und lädt sie per SFTP auf den Strato-Webspace.
-# Derzeit nur manuell (Actions › Website auf Strato › Run workflow), weil die
-# Seite vorerst auf GitHub Pages läuft. Für den Umzug zu Strato die Zeilen
-# unter „on:“ wieder einkommentieren und pages.yml löschen.
+# LIVE: Baut den freigegebenen Stand (Branch „main“) und lädt ihn per SFTP
+# auf den Strato-Webspace. Die Vorschau bleibt weiter auf GitHub Pages.
+#
+# Derzeit nur manuell (Actions › Website auf Strato › Run workflow).
+# Für den Launch:
+#   1. Secrets unten anlegen.
+#   2. Variable LIVE_STRATO = true anlegen (dann lädt „Vorschau freigeben“ automatisch hoch).
+#   3. Die Zeilen unter „on:“ einkommentieren (Upload auch bei Pull-Request-Merge
+#      und jede Nacht, damit vergangene Termine verschwinden).
 #
 # Benötigte Secrets (GitHub > Settings > Secrets and variables > Actions):
 #   STRATO_SFTP_HOST      z. B. 5012345.ssh.w1.strato.hosting
@@ -27,6 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: actions/setup-node@v4
         with:

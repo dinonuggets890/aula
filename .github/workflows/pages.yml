@@ -1,14 +1,17 @@
-# Baut die Website und veröffentlicht sie auf GitHub Pages.
-# Läuft bei jeder Änderung auf main (auch aus Pages CMS), täglich nachts
+# VORSCHAU: Baut den Branch „vorschau“ und veröffentlicht ihn auf GitHub Pages.
+# Läuft bei jeder Änderung auf „vorschau“ (auch aus Pages CMS), täglich nachts
 # (damit vergangene Termine verschwinden) und auf Knopfdruck.
+# Freigegeben wird mit dem Workflow „Vorschau freigeben“ (freigabe.yml).
 #
-# Einmalig einrichten: Settings › Pages › Source: „GitHub Actions“.
+# Einmalig einrichten:
+#   Settings › Pages › Source: „GitHub Actions“
+#   Settings › Environments › github-pages › Deployment branches: „vorschau“ und „main“ erlauben
 
-name: Website veröffentlichen (GitHub Pages)
+name: Vorschau veröffentlichen (GitHub Pages)
 
 on:
   push:
-    branches: [main]
+    branches: [vorschau]
   schedule:
     - cron: '17 2 * * *'
   workflow_dispatch:
@@ -26,7 +29,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # Immer den Vorschau-Stand bauen, auch beim nächtlichen Lauf
+      # (der läuft bei GitHub immer auf dem Standard-Branch).
       - uses: actions/checkout@v4
+        with:
+          ref: vorschau
 
       - uses: actions/setup-node@v4
         with:
@@ -43,7 +50,7 @@ jobs:
           # (bei eigener Domain: https://meine-domain.de und leer)
           SITE_URL: ${{ steps.pages.outputs.origin }}
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
-          # Prototyp: nicht bei Google & Co. auftauchen. Für den echten Livegang entfernen.
+          # Vorschau: nicht bei Google & Co. auftauchen.
           SGN_NOINDEX: '1'
 
       - uses: actions/upload-pages-artifact@v3

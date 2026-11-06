@@ -1,12 +1,34 @@
 # Website Schauspielgruppe Neusäß e.V.
 
-Statische Website mit [Astro](https://astro.build), Inhaltspflege über [Pages CMS](https://pagescms.org) und Veröffentlichung auf GitHub Pages (später optional Strato).
+Statische Website mit [Astro](https://astro.build), Inhaltspflege über [Pages CMS](https://pagescms.org), Vorschau auf GitHub Pages und (nach dem Launch) Live-Seite auf Strato.
 
 ```
-Pages CMS ──speichert──> GitHub-Repo (main) ──GitHub Action──> npm run build ──> GitHub Pages
+Pages CMS ──speichert──> Branch „vorschau“ ──> Vorschau auf GitHub Pages (Link für den Verein)
+                                │
+             Actions › „Vorschau freigeben“
+                                │
+                                v
+                         Branch „main“ ──> Live-Seite auf Strato (nach dem Launch)
 ```
 
-Adresse vorerst: https://dinonuggets890.github.io/aula/
+Vorschau: https://dinonuggets890.github.io/aula/
+
+## Vorschau und Freigabe
+
+| Branch | Bedeutung | Wird veröffentlicht auf |
+| --- | --- | --- |
+| `vorschau` | Arbeitsstand. Hier speichert Pages CMS. | GitHub Pages (Vorschau-Link), 1–2 Minuten nach jeder Änderung |
+| `main` | Freigegebener Stand | Strato (sobald eingerichtet) |
+
+1. In Pages CMS oben den Branch **`vorschau`** auswählen und Inhalte bearbeiten.
+2. Den Vorschau-Link an den Verein schicken. Er ist öffentlich erreichbar (wer den Link hat, kann ihn öffnen), steht aber nicht bei Google (`noindex`).
+3. Passt alles: auf GitHub *Actions › Vorschau freigeben › Run workflow* (Branch egal) klicken. Der Stand von `vorschau` wird nach `main` übernommen.
+   Alternativ geht auch ein Pull Request `vorschau → main`, dann sieht man vorher genau, was sich ändert.
+
+Hinweise:
+
+- Nicht direkt auf `main` bearbeiten. Sonst bricht die Freigabe mit einer Meldung ab, statt etwas zu überschreiben. Lösung: Pull Request `main → vorschau` mergen, dann erneut freigeben.
+- Änderungen an den Workflows (`.github/workflows/`) kann der Freigabe-Knopf aus Sicherheitsgründen nicht übernehmen (GitHub erlaubt das dem automatischen Token nicht). Solche Änderungen per Pull Request nach `main` bringen.
 
 ## Lokal starten
 
@@ -45,30 +67,29 @@ Automatik:
 
 ## Einrichtung
 
-### 1. GitHub Pages
+### 1. GitHub Pages (Vorschau)
 
-1. Projekt auf den Branch `main` pushen.
-2. *Settings › Pages › Build and deployment › Source* auf **GitHub Actions** stellen.
+1. *Settings › Pages › Build and deployment › Source* auf **GitHub Actions** stellen.
    (Mit kostenlosem GitHub-Konto muss das Repository dafür öffentlich sein.)
-3. Jeder Push auf `main` (auch jede Speicherung in Pages CMS) startet *Actions › Website veröffentlichen (GitHub Pages)*. Zusätzlich baut sich die Seite jede Nacht neu. Manuell starten geht dort über *Run workflow*.
+2. *Settings › Environments › github-pages › Deployment branches and tags*: **`vorschau`** und `main` erlauben.
+3. Jeder Push auf `vorschau` (auch jede Speicherung in Pages CMS) startet *Actions › Vorschau veröffentlichen (GitHub Pages)*. Zusätzlich baut sich die Vorschau jede Nacht neu. Manuell starten geht dort über *Run workflow*.
 
-Die Seite liegt dann im Unterordner `/aula/`. Adresse und Unterordner setzt der Workflow automatisch (`SITE_URL`, `BASE_PATH`). Interne Links im Code immer mit `pfad('/…')` aus `src/lib/data.ts` schreiben, sonst fehlt der Unterordner.
+Die Vorschau liegt im Unterordner `/aula/`. Adresse und Unterordner setzt der Workflow automatisch (`SITE_URL`, `BASE_PATH`). Interne Links im Code immer mit `pfad('/…')` aus `src/lib/data.ts` schreiben, sonst fehlt der Unterordner.
 
-Eigene Domain später: unter *Settings › Pages › Custom domain* eintragen, dann fällt der Unterordner automatisch weg.
+### 2. Strato (Live-Seite)
 
-### 2. Später: Umzug zu Strato (optional)
+Der Workflow `.github/workflows/strato.yml` ist vorbereitet, läuft aber nur manuell. Für den Launch:
 
-Der Workflow `.github/workflows/strato.yml` ist vorbereitet, läuft aber nur manuell. Für den Umzug:
-
-1. Unter *Settings › Secrets and variables › Actions* vier Secrets anlegen: `STRATO_SFTP_HOST` (z. B. `5012345.ssh.w1.strato.hosting`), `STRATO_SFTP_USER`, `STRATO_SFTP_PASSWORD`, `STRATO_SFTP_PATH` (Zielordner, z. B. `/schauspielgruppe`).
-2. Im Strato-Kundenlogin einen **SFTP-Zugang** anlegen (ab Paket „Hosting Starter“) und einen **eigenen, leeren Ordner** für die Website, auf den die Domain zeigt.
+1. Unter *Settings › Secrets and variables › Actions › Secrets* vier Secrets anlegen: `STRATO_SFTP_HOST` (z. B. `5012345.ssh.w1.strato.hosting`), `STRATO_SFTP_USER`, `STRATO_SFTP_PASSWORD`, `STRATO_SFTP_PATH` (Zielordner, z. B. `/schauspielgruppe`).
+2. Unter *… › Variables* die Variable `LIVE_STRATO` mit dem Wert `true` anlegen. Dann lädt „Vorschau freigeben“ die Seite direkt danach auf Strato hoch.
+3. In `strato.yml` die Auslöser unter `on:` einkommentieren (Upload auch nach Pull-Request-Merge und jede Nacht).
+4. Im Strato-Kundenlogin einen **SFTP-Zugang** anlegen (ab Paket „Hosting Starter“) und einen **eigenen, leeren Ordner** für die Website, auf den die Domain zeigt.
    **Wichtig:** Der Upload spiegelt `dist/` und löscht im Zielordner alles, was nicht dazugehört.
-3. SSL aktivieren. Die `.htaccess` leitet auf HTTPS um und alte WordPress-Adressen auf die neuen Seiten (wirkt nur bei Strato, nicht bei GitHub Pages).
-4. In `strato.yml` die Auslöser unter `on:` wieder einkommentieren und `pages.yml` löschen.
+5. SSL aktivieren. Die `.htaccess` leitet auf HTTPS um und alte WordPress-Adressen auf die neuen Seiten (wirkt nur bei Strato, nicht bei GitHub Pages).
 
 ### 3. Pages CMS
 
-1. [app.pagescms.org](https://app.pagescms.org) öffnen, mit GitHub anmelden, die Pages-CMS-App für das Repository freigeben und das Repository auswählen. Die Konfiguration steht in `.pages.yml`.
+1. [app.pagescms.org](https://app.pagescms.org) öffnen, mit GitHub anmelden, die Pages-CMS-App für das Repository freigeben, das Repository und den Branch **`vorschau`** auswählen. Die Konfiguration steht in `.pages.yml`.
 2. Die Vereinsmitglieder als *Collaborators* per E-Mail einladen. Sie melden sich per E-Mail-Link an und brauchen kein GitHub-Konto.
 
 ## Vor dem Livegang
@@ -89,9 +110,9 @@ Der Workflow `.github/workflows/strato.yml` ist vorbereitet, läuft aber nur man
 - [ ] Prüfen, ob „Wolfgang Hugo Ritter“ der amtliche Name ist (Impressum und Datenschutz).
 - [ ] Fotos, Videos und Musik: Rechte der Fotografen, Einwilligungen (bei Kindern der Eltern) und Musiklizenzen klären.
 
-## Prototyp auf GitHub Pages
+## Vorschau nicht bei Google
 
-Der GitHub-Pages-Workflow baut mit `SGN_NOINDEX=1`: Jede Seite bekommt `<meta name="robots" content="noindex, nofollow">`, und die robots.txt verweist auf keine Sitemap. So taucht der Prototyp nicht bei Google auf. Der Strato-Workflow setzt die Variable nicht, dort ist die Seite normal auffindbar.
+Der Vorschau-Workflow baut mit `SGN_NOINDEX=1`: Jede Seite bekommt `<meta name="robots" content="noindex, nofollow">`, und die robots.txt verweist auf keine Sitemap. Der Strato-Workflow setzt die Variable nicht, dort ist die Seite normal auffindbar.
 
 ## Technik
 
