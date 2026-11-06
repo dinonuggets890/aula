@@ -11,4 +11,13 @@ art: abendfuellend
 kurztext: Ein Shooter aus dem Buche des Meisters Lazernus Speditus.
 zitat: Ein Shooter aus dem Buche des Meisters Lazernus Speditus. Und weiteres...
 trailer_format: quer
+termine:
+  - datum: 2026-11-07
+    uhrzeit: 19:30
+    premiere: false
+    ausverkauft: false
+  - datum: 2026-11-14
+    uhrzeit: 19:30
+    premiere: false
+    ausverkauft: false
 ---
