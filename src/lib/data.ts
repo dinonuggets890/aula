@@ -8,6 +8,9 @@ import chronikRaw from '../data/chronik.json';
 import fotosRaw from '../data/fotos.json';
 
 export const site = einstellungen;
+
+/** Prototyp: SGN_NOINDEX=1 sperrt die Seite für Suchmaschinen (gesetzt im GitHub-Pages-Workflow). */
+export const noindex = process.env.SGN_NOINDEX === '1';
 export const club = verein;
 
 const TZ = 'Europe/Berlin';

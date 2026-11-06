@@ -84,6 +84,14 @@ Der Workflow `.github/workflows/strato.yml` ist vorbereitet, läuft aber nur man
 - [ ] Eintrittspreise eintragen (Einstellungen › Eintrittspreise).
 - [ ] **Datenschutzerklärung prüfen lassen.** Sie ist ein Entwurf für die neue Seite (kein Google Analytics mehr, keine Cookies). Hosting-Angabe anpassen: vorerst GitHub Pages (GitHub Inc., USA), später ggf. Strato.
 - [ ] Impressum prüfen. Der Verweis auf den alten § 55 RStV wurde auf § 18 Abs. 2 MStV aktualisiert.
+- [ ] Im Strato-Kundenlogin den **Vertrag zur Auftragsverarbeitung** (Art. 28 DSGVO) abschließen.
+- [ ] In der Datenschutzerklärung die genaue Speicherdauer der Strato-Logfiles eintragen (statt „nach kurzer Zeit“).
+- [ ] Prüfen, ob „Wolfgang Hugo Ritter“ der amtliche Name ist (Impressum und Datenschutz).
+- [ ] Fotos, Videos und Musik: Rechte der Fotografen, Einwilligungen (bei Kindern der Eltern) und Musiklizenzen klären.
+
+## Prototyp auf GitHub Pages
+
+Der GitHub-Pages-Workflow baut mit `SGN_NOINDEX=1`: Jede Seite bekommt `<meta name="robots" content="noindex, nofollow">`, und die robots.txt verweist auf keine Sitemap. So taucht der Prototyp nicht bei Google auf. Der Strato-Workflow setzt die Variable nicht, dort ist die Seite normal auffindbar.
 
 ## Technik
 

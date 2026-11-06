@@ -43,6 +43,8 @@ jobs:
           # (bei eigener Domain: https://meine-domain.de und leer)
           SITE_URL: ${{ steps.pages.outputs.origin }}
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          # Prototyp: nicht bei Google & Co. auftauchen. Für den echten Livegang entfernen.
+          SGN_NOINDEX: '1'
 
       - uses: actions/upload-pages-artifact@v3
         with:

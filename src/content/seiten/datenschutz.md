@@ -7,7 +7,7 @@ titel: Datenschutz
 ## 1. Verantwortlicher
 
 Schauspielgruppe Neusäß e.V.\
-Wolfgang Hugo Ritter\
+vertreten durch den 1. Vorsitzenden Wolfgang Hugo Ritter\
 Tylerstr. 7b\
 86156 Augsburg\
 E-Mail: [info@schauspielgruppe-neusaess.de](mailto:info@schauspielgruppe-neusaess.de)
@@ -32,36 +32,28 @@ Wenn Sie uns per E-Mail kontaktieren, verarbeiten wir Ihre Angaben zur Bearbeitu
 
 Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer Daten, auf Datenübertragbarkeit sowie das Recht, der Verarbeitung zu widersprechen. Wenden Sie sich dazu an die oben genannte E-Mail-Adresse. Außerdem können Sie sich bei einer Datenschutz-Aufsichtsbehörde beschweren, zum Beispiel beim Bayerischen Landesamt für Datenschutzaufsicht (BayLDA).
 
-## 7. Datenschutz für Mitglieder
+## 7. Daten unserer Mitglieder
 
-Nachtrag Nr. 1 zur Satzung vom 03.10.1989 und Änderung vom 11.10.1989 der Schauspielgruppe Neusäß e. V., Abschnitt VII: Datenschutzerklärung nach der EU-Datenschutzgrundverordnung (DS-GVO).
+Für Mitglieder gilt Abschnitt VII der Satzung (Nachtrag Nr. 1 zur Satzung vom 03.10.1989 und Änderung vom 11.10.1989, Fassung vom 20.05.2018). Hier das Wichtigste in Kürze. Maßgeblich ist der Wortlaut der Satzung.
 
-Der Verein speichert mit Einwilligung seiner Mitglieder deren personenbezogene Daten, verarbeitet diese auch auf elektronischem Wege und nutzt sie zur Erfüllung der Aufgaben des Vereins.
+Der Verein speichert mit Einwilligung seiner Mitglieder deren personenbezogene Daten, verarbeitet sie auch elektronisch und nutzt sie zur Erfüllung der Aufgaben des Vereins.
 
-Folgende Daten werden ausschließlich gespeichert und verarbeitet:
+**Welche Daten wir speichern:**
 
 - Geschlecht
-- Vorname, Nachname
+- Vorname und Nachname
 - Geburtsdatum
 - Anschrift (Straße, Hausnummer, PLZ, Ort)
-- E-Mail-Adresse und Telefonnummern (Festnetz und Mobilnummer)
+- E-Mail-Adresse und Telefonnummern (Festnetz und Mobil)
 - Datum des Vereinsbeitritts
 - Funktion im Theaterbereich
-- Bankverbindung (IBAN)
-- Ehrungen/Jubiläen
+- Bankverbindung (IBAN, BIC) für den Beitragseinzug
+- Ehrungen und Jubiläen
 
-Weitere Daten werden nicht oder nur mit ausdrücklicher, ergänzender Zustimmung des Betroffenen erhoben.
+Weitere Daten erheben wir nicht oder nur mit ausdrücklicher, ergänzender Zustimmung der betroffenen Person. Alle personenbezogenen Daten und Bankdaten schützen wir durch geeignete technische und organisatorische Maßnahmen vor Kenntnis und Zugriff Dritter.
 
-Für das Beitragswesen wird des Weiteren die Bankverbindung des Betroffenen (IBAN, BIC) gespeichert.
+**Weitergabe:** Für die Bestandsverwaltung und die Beitragserhebung übermitteln wir die erforderlichen Daten an den Verband Bayerischer Amateurtheater (VBAT). Zur Erfüllung des Vereinszwecks dürfen Mitgliederdaten außerdem an die Dachverbände und an die beauftragten Kreditinstitute weitergegeben werden. Wir stellen sicher, dass das Kreditinstitut die Daten ausschließlich zur Erfüllung der Aufgaben des Vereins verwendet.
 
-Alle personenbezogenen Daten und Bankdaten werden durch geeignete technische und organisatorische Maßnahmen von Kenntnis und Zugriff Dritter geschützt.
+**Speicherdauer und Löschung:** Nach Zweckerreichung oder Austritt werden die Daten archiviert. Nach einem Widerspruch des Mitglieds werden sie unverzüglich gelöscht, und wir teilen dem Mitglied die Löschung mit. Zwischen dem Ende der Mitgliedschaft und der Löschung ist die Verarbeitung eingeschränkt. Soweit gesetzlich vorgeschrieben, bewahren wir Daten bis zum Ablauf der steuerrechtlichen und buchhalterischen Aufbewahrungsfristen sicher auf und vernichten sie danach. Daten verstorbener Mitglieder werden archiviert und vor unbefugtem Gebrauch geschützt.
 
-Aus Gründen der Bestandsverwaltung und der Beitragserhebung werden die unter Ziffer 1 genannten persönlichen Daten im Umfang des Erforderlichen an den Verband Bayerischer Amateurtheater (VBAT) gesendet. Die Meldung von Vereinsmitgliedern und personenbezogenen Daten derselben dürfen vom Verein zur Erfüllung seines Vereinszwecks an die Dachverbände weitergegeben werden, ebenso an die maßgeblichen Bankinstitute.
-
-Der Verein stellt sicher, dass die Verwendung durch das beauftragte Kreditinstitut ausschließlich zur Erfüllung der Aufgaben des Vereins erfolgt und nach Zweckerreichung, Austritt des betroffenen Mitglieds archiviert oder nach erfolgtem Widerspruch des Mitglieds die Daten unverzüglich gelöscht und die Löschung dem betroffenen Mitglied bekannt gegeben wird. In der Zeit zwischen Beendigung der Mitgliedschaft und der Löschung wird die Verarbeitung dieser Daten eingeschränkt.
-
-Im Übrigen werden die Daten verstorbener Mitglieder archiviert und vor unbefugtem Gebrauch geschützt. Soweit gesetzlich vorgeschrieben, werden die Daten von Vereinsmitgliedern bis zum Ablauf der steuerrechtlichen oder buchhaltungstechnischen Aufbewahrungsfristen dokumentensicher aufbewahrt und nach Ablauf der Frist vernichtet.
-
-Die Datenkategorien unter 1b), 1f), 1g) und 1i) werden zum Zweck der Vereinschronik im Vereinsarchiv gespeichert. Der Speicherung liegt ein berechtigtes Interesse des Vereins an der zeitgeschichtlichen Archivierung des Amateurtheaters zugrunde.
-
-Neusäß, den 20.05.2018
+**Vereinschronik:** Name, Datum des Vereinsbeitritts, Funktion im Theaterbereich sowie Ehrungen und Jubiläen speichern wir zusätzlich im Vereinsarchiv, um die Geschichte des Vereins zu dokumentieren. Grundlage ist unser berechtigtes Interesse an der zeitgeschichtlichen Archivierung des Amateurtheaters (Art. 6 Abs. 1 lit. f DSGVO).
