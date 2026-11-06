@@ -1,6 +1,6 @@
 ---
 titel: Die zwölf Geschworenen
-aktuell: false
+aktuell: true
 titel_zeile1: Die zwölf
 titel_zeile2: Geschworenen
 rahmen_text: "12"
