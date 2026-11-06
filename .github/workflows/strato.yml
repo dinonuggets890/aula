@@ -1,10 +1,10 @@
 # LIVE: Baut den freigegebenen Stand (Branch „main“) und lädt ihn per SFTP
-# auf den Strato-Webspace. Die Vorschau bleibt weiter auf GitHub Pages.
+# auf den Strato-Webspace. Staging bleibt weiter auf GitHub Pages.
 #
 # Derzeit nur manuell (Actions › Website auf Strato › Run workflow).
 # Für den Launch:
 #   1. Secrets unten anlegen.
-#   2. Variable LIVE_STRATO = true anlegen (dann lädt „Vorschau freigeben“ automatisch hoch).
+#   2. Variable LIVE_STRATO = true anlegen (dann lädt „Staging freigeben“ automatisch hoch).
 #   3. Die Zeilen unter „on:“ einkommentieren (Upload auch bei Pull-Request-Merge
 #      und jede Nacht, damit vergangene Termine verschwinden).
 #

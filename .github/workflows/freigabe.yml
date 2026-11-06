@@ -1,15 +1,15 @@
-# Übernimmt den aktuellen Stand von „vorschau“ nach „main“ (= freigegeben).
-# Starten: Actions › Vorschau freigeben › Run workflow.
+# Übernimmt den aktuellen Stand von „staging“ nach „main“ (= freigegeben).
+# Starten: Actions › Staging freigeben › Run workflow.
 #
 # Es wird nur „vorgespult“ (fast-forward): Hat jemand direkt auf main etwas
-# geändert, das in der Vorschau fehlt, bricht die Freigabe mit Hinweis ab,
+# geändert, das in staging fehlt, bricht die Freigabe mit Hinweis ab,
 # statt etwas zu überschreiben.
 #
 # Nach dem Umzug zu Strato: unter Settings › Secrets and variables › Actions ›
 # Variables die Variable LIVE_STRATO = true anlegen. Dann lädt die Freigabe
 # die Seite anschließend automatisch auf Strato hoch.
 
-name: Vorschau freigeben
+name: Staging freigeben
 
 on:
   workflow_dispatch:
@@ -30,20 +30,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: vorschau nach main übernehmen
+      - name: staging nach main übernehmen
         run: |
-          git fetch origin vorschau main
-          if git merge-base --is-ancestor origin/vorschau origin/main; then
-            echo "::notice::Nichts zu tun: main ist bereits auf dem Stand der Vorschau."
+          git fetch origin staging main
+          if git merge-base --is-ancestor origin/staging origin/main; then
+            echo "::notice::Nichts zu tun: main ist bereits auf dem Stand von staging."
             exit 0
           fi
-          if ! git merge-base --is-ancestor origin/main origin/vorschau; then
-            echo "::error::Auf main gibt es Änderungen, die in der Vorschau fehlen. Bitte erst main in vorschau übernehmen (Pull Request main → vorschau) und dann erneut freigeben."
+          if ! git merge-base --is-ancestor origin/main origin/staging; then
+            echo "::error::Auf main gibt es Änderungen, die in staging fehlen. Bitte erst main in staging übernehmen (Pull Request main → staging) und dann erneut freigeben."
             exit 1
           fi
           echo "Folgende Änderungen werden freigegeben:"
-          git log --format='  • %s (%an, %ad)' --date=format:'%d.%m.%Y %H:%M' origin/main..origin/vorschau
-          git push origin origin/vorschau:refs/heads/main
+          git log --format='  • %s (%an, %ad)' --date=format:'%d.%m.%Y %H:%M' origin/main..origin/staging
+          git push origin origin/staging:refs/heads/main
 
       - name: Live-Seite auf Strato aktualisieren
         if: vars.LIVE_STRATO == 'true'
