@@ -29,6 +29,17 @@ const buehne = site.buehnenflaechen === 'hell' ? 'hell' : 'dunkel';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Vor dem ersten Zeichnen: Bewegung ja/nein, Sparmodus für schwache Geräte.
+      // „ruhig“: Nutzer wünscht wenig Bewegung. „sparsam“: wenige Kerne, wenig Speicher oder Datensparmodus.
+      (function () {
+        var d = document.documentElement, n = navigator, c = n.connection || {};
+        var ruhig = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var sparsam = (n.hardwareConcurrency || 4) <= 2 || (n.deviceMemory || 4) <= 2 || c.saveData === true;
+        d.classList.add(ruhig || !('IntersectionObserver' in window) ? 'ruhig' : 'bewegt');
+        if (sparsam) d.classList.add('sparsam');
+      })();
+    </script>
     <title>{voll}</title>
     <meta name="description" content={beschreibung} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
@@ -54,5 +65,8 @@ const buehne = site.buehnenflaechen === 'hell' ? 'hell' : 'dunkel';
     </main>
     <Footer kompakt={footerKompakt} />
     {ticketleiste && <Ticketleiste />}
+    <script>
+      import '../scripts/bewegung';
+    </script>
   </body>
 </html>

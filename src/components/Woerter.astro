@@ -1,0 +1,16 @@
+---
+/**
+ * Titel wortweise aufsteigen lassen (wie hinter einer Bühnenkante).
+ * Wörter bleiben ganz (Unterschneidung der Schrift bleibt erhalten).
+ * Screenreader lesen den normalen Text, die Animation ist für sie unsichtbar.
+ * Animiert wird nur mit html.bewegt (siehe Base.astro), sonst steht der Text einfach da.
+ */
+interface Props {
+  text: string;
+  /** Verzögerung in Wörtern, damit mehrere Zeilen nacheinander kommen */
+  start?: number;
+}
+const { text, start = 0 } = Astro.props;
+const woerter = text.split(/\s+/).filter(Boolean);
+---
+<span class="sr-only">{text}</span><span class="woerter" aria-hidden="true">{woerter.map((w, i) => <><span class="wort"><span class="wort__innen" style={`--w:${start + i}`}>{w}</span></span>{i < woerter.length - 1 ? ' ' : ''}</>)}</span>

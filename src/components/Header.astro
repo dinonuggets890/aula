@@ -8,7 +8,7 @@ interface Props {
 }
 const { aktiv = '' } = Astro.props;
 ---
-<header class="kopf">
+<header class="kopf" data-kopf>
   <div class="wrap kopf__inner">
     <a class="kopf__logo" href={pfad('/')} aria-label={`${site.seitentitel}, zur Startseite`}>
       <img src={pfad('/img/logo-rot.svg')} alt="Die Aula, Schauspielgruppe Neusäß e.V." width="859" height="296" />
@@ -73,4 +73,38 @@ const { aktiv = '' } = Astro.props;
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && menu && !menu.hidden) setze(false);
   });
+
+  // Kopfzeile: beim Runterscrollen ausblenden, beim Hochscrollen sofort wieder zeigen.
+  // Die Höhe landet in --kopf-h, damit die Unternavigation darunter andocken kann.
+  const kopf = document.querySelector<HTMLElement>('[data-kopf]');
+  if (kopf) {
+    const html = document.documentElement;
+    const hoehe = () => html.style.setProperty('--kopf-h', `${kopf.offsetHeight}px`);
+    hoehe();
+    window.addEventListener('resize', hoehe, { passive: true });
+    let letzte = window.scrollY;
+    let weg = false;
+    let geplant = false;
+    const setzeWeg = (w: boolean) => {
+      if (w === weg) return;
+      weg = w;
+      kopf.classList.toggle('kopf--weg', w);
+      html.classList.toggle('kopf-weg', w);
+    };
+    const pruefen = () => {
+      geplant = false;
+      const y = window.scrollY;
+      kopf.classList.toggle('kopf--schatten', y > 8);
+      if (y < 120) { setzeWeg(false); letzte = y; return; }
+      const d = y - letzte;
+      if (Math.abs(d) < 6) return; // kleines Zittern ignorieren
+      setzeWeg(d > 0 && (!menu || menu.hidden) && !kopf.querySelector(':focus-visible'));
+      letzte = y;
+    };
+    window.addEventListener('scroll', () => {
+      if (!geplant) { geplant = true; requestAnimationFrame(pruefen); }
+    }, { passive: true });
+    kopf.addEventListener('focusin', () => { if (kopf.querySelector(':focus-visible')) setzeWeg(false); });
+    pruefen();
+  }
 </script>

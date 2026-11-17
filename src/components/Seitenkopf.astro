@@ -3,6 +3,8 @@
  * Kopf einer Unterseite: Label, großer Titel, kursive Zeile, optional Intro.
  * Rechts kann per Slot etwas stehen (z. B. Zähler).
  */
+import Woerter from './Woerter.astro';
+
 interface Props {
   label: string;
   gross: string;
@@ -15,9 +17,9 @@ const { label, gross, kursiv = '', intro = '', id = 'seiten-titel' } = Astro.pro
 <section class="wrap seitenkopf" aria-labelledby={id}>
   <p class="label">{label}</p>
   <div class="kopfzeile">
-    <h1 id={id} class="auftritt">
-      <span class="seitenkopf__gross">{gross}</span>
-      {kursiv && <span class="seitenkopf__serif">{kursiv}</span>}
+    <h1 id={id}>
+      <span class="seitenkopf__gross"><Woerter text={gross} /></span>
+      {kursiv && <span class="seitenkopf__serif"><Woerter text={kursiv} start={gross.split(/\s+/).length} /></span>}
     </h1>
     <slot />
   </div>

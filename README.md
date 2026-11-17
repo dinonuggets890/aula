@@ -97,6 +97,22 @@ Lokal mit Platzhaltern ansehen:
 SGN_PLATZHALTER=1 npm run dev
 ```
 
+## Bewegung und Interaktion
+
+- **Kopfzeile** verschwindet beim Runterscrollen und erscheint beim Hochscrollen sofort wieder; die Sprungleiste der Unterseiten dockt darunter an. Roter Fortschrittsbalken unter der Kopfzeile.
+- **Inhalte erscheinen beim Scrollen** (gestaffelt; Eintrittskarten „fallen“ leicht gekippt herein). Was beim Laden schon zu sehen ist, wird nicht versteckt.
+- **Titel** steigen wortweise hinter einer Kante auf.
+- **Maus** (nur Desktop): Scheinwerfer folgt dem Zeiger auf den dunklen Bühnen, der rote Rahmen weicht aus, Karten und Buttons reagieren beim Darüberfahren.
+- **Scroll-gebunden** (Chrome, Edge, Safari 26+): Bilder schweben leicht, Titel der Bühne zieht nach oben weg, „Vorhang auf.“ steigt auf. Läuft ohne JavaScript direkt im Browser.
+- **Laufband** reagiert auf das Scrolltempo, **Zahlen** zählen hoch, **Bilder** blenden beim Laden ein, **Seitenwechsel** werden weich überblendet.
+
+Leistung und Barrierefreiheit:
+
+- Es werden nur `opacity`, `translate`, `rotate`, `scale`, `transform` animiert (läuft auf der Grafikkarte). Ein einziger Scroll-Listener mit `requestAnimationFrame`, sonst `IntersectionObserver`. Keine Bibliotheken; alle Skripte stehen direkt im HTML (Startseite inkl. Skripten ca. 9 KB gezippt).
+- Gemessen mit 6-fach gedrosselter CPU im Handy-Format: ca. 59 Bilder/s beim Scrollen, keine blockierenden Aufgaben.
+- `prefers-reduced-motion`: keine Bewegung (Klasse `ruhig`). Schwache Geräte (≤ 2 Kerne, ≤ 2 GB Speicher oder Datensparmodus): keine Maus- und Parallax-Effekte (Klasse `sparsam`). Ohne JavaScript ist alles sichtbar.
+- Code: `src/scripts/bewegung.ts`, Kopfzeile in `src/components/Header.astro`, Erkennung im `<head>` von `src/layouts/Base.astro`, CSS im Abschnitt „Bewegung und Interaktion“ in `src/styles/global.css`.
+
 ## Später WordPress
 
 Die Seite ist so gebaut, dass sie sich in ein WordPress-Theme übertragen lässt: gleiche Adressen, gleiche Inhaltsfelder, Komponenten als Template-Teile, CSS ohne Framework. Details in [`WORDPRESS.md`](WORDPRESS.md).

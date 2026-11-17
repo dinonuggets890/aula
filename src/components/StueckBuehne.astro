@@ -8,6 +8,7 @@
  */
 import Icon from './Icon.astro';
 import Luecke from './Luecke.astro';
+import Woerter from './Woerter.astro';
 import { fmt, pfad, platzhalter, site, tel, type StueckInfo } from '../lib/data';
 
 interface Props {
@@ -34,10 +35,10 @@ const ticketsHref = pfad(kommend.length ? '/karten/' : '/aktuelles-stueck/#termi
         </div>
         <h1 id="hero-titel" class="hero__titel">
           <span class="hero__zeile1">
-            {zeile1 && <span class="hero__serif auftritt">{zeile1}</span>}
+            {zeile1 && <span class="hero__serif"><Woerter text={zeile1} /></span>}
             {d.rahmen_text && <span class="rahmen auftritt" aria-hidden="true"><span>{d.rahmen_text}</span></span>}
           </span>
-          {zeile2 && <span class:list={['hero__gross', 'auftritt', 'auftritt--2', { 'hero__gross--lang': langerTitel }]}>{zeile2}</span>}
+          {zeile2 && <span class:list={['hero__gross', { 'hero__gross--lang': langerTitel }]}><Woerter text={zeile2} start={zeile1 ? zeile1.split(/\s+/).length : 0} /></span>}
         </h1>
         <div class="hero__unten">
           <div>
@@ -101,8 +102,8 @@ const ticketsHref = pfad(kommend.length ? '/karten/' : '/aktuelles-stueck/#termi
       <>
         <div class="hero__oben"><p class="label">{site.seitentitel}</p></div>
         <h1 id="hero-titel" class="hero__titel">
-          <span class="hero__serif auftritt">Theater</span>
-          <span class="hero__gross auftritt auftritt--2">aus Neusäß</span>
+          <span class="hero__serif"><Woerter text="Theater" /></span>
+          <span class="hero__gross"><Woerter text="aus Neusäß" start={1} /></span>
         </h1>
         <div class="hero__unten">
           <p class="hero__text lead">Unsere nächste Produktion ist in Vorbereitung. Neue Termine folgen.</p>

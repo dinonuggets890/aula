@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Bild from '../components/Bild.astro';
+import Woerter from '../components/Woerter.astro';
 import { getChronik, pfad } from '../lib/data';
 
 const eintraege = await getChronik();
@@ -20,9 +21,9 @@ for (const e of eintraege) {
   <section class="wrap seitenkopf" aria-labelledby="chronik-titel">
     <p class="label"><a class="label__link" href={pfad('/verein/')}>Verein</a> · Frühere Aufführungen</p>
     <div class="kopfzeile">
-      <h1 id="chronik-titel" class="auftritt">
-        <span class="seitenkopf__gross">Alle Stücke</span>
-        <span class="seitenkopf__serif">seit {erstesJahr}.</span>
+      <h1 id="chronik-titel">
+        <span class="seitenkopf__gross"><Woerter text="Alle Stücke" /></span>
+        <span class="seitenkopf__serif"><Woerter text={`seit ${erstesJahr}.`} start={2} /></span>
       </h1>
       <div class="zaehler">
         <div class="zaehler__rahmen" aria-hidden="true"><span data-zaehler>{anzahl.alle}</span></div>

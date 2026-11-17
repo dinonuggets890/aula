@@ -8,7 +8,8 @@ Die Website läuft derzeit als statische Astro-Seite mit Pages CMS. Sie ist so a
 - **Inhalte als Felder, nicht als Freitext.** Alles, was die Seite anzeigt, kommt aus klar benannten Feldern (Termine, Besetzung, Preise …). Diese Felder werden in WordPress 1:1 zu Feldgruppen.
 - **Komponenten = Template-Teile.** Jede Datei in `src/components/` entspricht einem Template-Teil (`template-parts/*.php`) bzw. einem Block-Pattern.
 - **CSS ohne Framework.** `src/styles/global.css` ist reines CSS mit Variablen. Es kann als `style.css` des Themes übernommen werden. Klassennamen bleiben gleich.
-- **JavaScript ohne Bibliotheken.** Die kleinen Skripte (Menü, Vorhang/Trailer, Monatsfilter, Chronik-Filter, Unternavigation, Ticketleiste) sind reines JavaScript und laufen in WordPress unverändert.
+- **JavaScript ohne Bibliotheken.** Die kleinen Skripte (Menü, Kopfzeile ein/aus, Vorhang/Trailer, Monatsfilter, Chronik-Filter, Unternavigation, Ticketleiste, `src/scripts/bewegung.ts`) sind reines JavaScript und laufen in WordPress unverändert. Das kleine Erkennungsskript aus dem `<head>` von `Base.astro` (setzt `bewegt`/`ruhig`/`sparsam` am `<html>`) gehört per `wp_head` ebenfalls in den Kopf, vor das Stylesheet.
+- **Scroll-gebundene Animationen** stehen im CSS. Achtung beim Minifizieren: `animation-timeline` muss eine eigene Deklaration bleiben (siehe Kommentar in `global.css`).
 - **Keine externen Dienste.** Schriften liegen lokal, keine Cookies, kein Tracking.
 
 ## Empfohlener Aufbau
