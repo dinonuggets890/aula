@@ -1,18 +1,12 @@
 ---
 import Icon from './Icon.astro';
 import { site, mailto, pfad } from '../lib/data';
+import { navigation, type Bereich } from '../lib/navigation';
 
 interface Props {
-  aktiv?: 'chronik' | 'karten' | 'fotos' | '';
+  aktiv?: Bereich | '';
 }
 const { aktiv = '' } = Astro.props;
-const links = [
-  { href: '/#spielplan', text: 'Spielplan' },
-  { href: '/#stueck', text: 'Das Stück' },
-  { href: '/#verein', text: 'Über uns' },
-  { href: '/chronik/', text: 'Chronik', key: 'chronik' },
-  { href: '/#mitmachen', text: 'Mitmachen' },
-];
 ---
 <header class="kopf">
   <div class="wrap kopf__inner">
@@ -20,15 +14,15 @@ const links = [
       <img src={pfad('/img/logo-rot.svg')} alt="Die Aula, Schauspielgruppe Neusäß e.V." width="859" height="296" />
     </a>
     <nav class="kopf__nav" aria-label="Hauptnavigation">
-      {links.map((l) => (
-        <a href={pfad(l.href)} aria-current={aktiv && l.key === aktiv ? 'page' : undefined}>{l.text}</a>
+      {navigation.map((l) => (
+        <a href={pfad(l.href)} aria-current={aktiv === l.key ? 'page' : undefined}>{l.text}</a>
       ))}
       <a class="btn btn--rot btn--klein" href={pfad('/karten/')} aria-current={aktiv === 'karten' ? 'page' : undefined}>
-        Karten<Icon name="pfeil" size={16} />
+        <Icon name="ticket" size={18} />Tickets
       </a>
     </nav>
     <div class="kopf__mobil">
-      <a class="btn btn--rot btn--klein" href={pfad('/karten/')} style="min-height:44px;padding:0 14px;font-size:14px">Karten</a>
+      <a class="btn btn--rot btn--klein kopf__tickets" href={pfad('/karten/')}>Tickets</a>
       <button class="menu-btn" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobilmenu" data-menu-auf>
         <Icon name="menu" size={26} />
       </button>
@@ -42,10 +36,21 @@ const links = [
       </button>
     </div>
     <nav aria-label="Hauptnavigation mobil">
-      {links.map((l) => <a href={pfad(l.href)} data-menu-link>{l.text}</a>)}
+      <ul class="mobilmenu__liste">
+        {navigation.map((l, i) => (
+          <li style={`--i:${i}`}>
+            <a class="mobilmenu__haupt" href={pfad(l.href)} aria-current={aktiv === l.key ? 'page' : undefined} data-menu-link>{l.text}</a>
+            {l.unter.length > 0 && (
+              <p class="mobilmenu__unter">
+                {l.unter.map((u) => <a href={pfad(u.href)} data-menu-link>{u.text}</a>)}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
     </nav>
     <div class="mobilmenu__fuss">
-      <a class="btn btn--papier" href={pfad('/karten/')}>Karten<Icon name="pfeil" /></a>
+      <a class="btn btn--papier" href={pfad('/karten/')}>Tickets<Icon name="pfeil" /></a>
       <a href={mailto}>{site.email}</a>
     </div>
   </div>

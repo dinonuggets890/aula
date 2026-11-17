@@ -134,7 +134,7 @@ content:
             list:
               collapsible:
                 collapsed: true
-                summary: "{datum} · {uhrzeit} Uhr"
+                summary: "{datum} · {uhrzeit} Uhr · {status}"
             fields:
               - name: datum
                 label: Datum
@@ -153,14 +153,83 @@ content:
                 label: Premiere
                 type: boolean
                 default: false
-              - name: ausverkauft
-                label: Ausverkauft
-                type: boolean
-                default: false
+              - name: status
+                label: Karten
+                type: select
+                default: verfuegbar
+                options:
+                  values:
+                    - name: verfuegbar
+                      label: Karten verfügbar
+                    - name: wenige
+                      label: Nur noch wenige Karten
+                    - name: ausverkauft
+                      label: Ausverkauft (zeigt Warteliste)
               - name: ticket_url
                 label: Ticket-Link nur für diesen Termin
                 description: Optional.
                 type: string
+          - name: besetzung
+            label: Besetzung (Es spielen)
+            description: Erscheint als Theaterzettel auf der Seite „Aktuelles Stück“.
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{rolle} · {name}"
+            fields:
+              - name: rolle
+                label: Rolle
+                type: string
+              - name: name
+                label: Darstellerin / Darsteller
+                type: string
+          - name: team
+            label: Team (Hinter der Bühne)
+            description: Regie wird automatisch ergänzt. Z. B. Regieassistenz, Technik, Maske, Kostüm, Souffleuse.
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{aufgabe} · {name}"
+            fields:
+              - name: aufgabe
+                label: Aufgabe
+                type: string
+              - name: name
+                label: Name
+                type: string
+          - name: ensemble_bild
+            label: Ensemble-Foto
+            type: image
+            options:
+              media: bilder
+          - name: preis
+            label: Eintritt (Euro)
+            description: Nur die Zahl, z. B. 14
+            type: string
+          - name: preis_ermaessigt
+            label: Eintritt ermäßigt (Euro)
+            type: string
+          - name: ermaessigt_fuer
+            label: Ermäßigung für
+            description: Z. B. „Schüler, Studierende, Menschen mit Behinderung“
+            type: string
+          - name: abendkasse
+            label: Abendkasse
+            description: Z. B. „Die Abendkasse öffnet 60 Minuten vor Beginn. Restkarten je nach Verfügbarkeit.“
+            type: text
+          - name: probenfotos
+            label: Probenfotos (Hinter den Kulissen)
+            description: Bis zu vier Fotos erscheinen auf der Startseite.
+            type: image
+            list: true
+            options:
+              media: bilder
+          - name: probenfotos_fotograf
+            label: Fotos von
+            description: Name der Fotografin / des Fotografen der Probenfotos
+            type: string
 
   - name: verein-gruppe
     label: Verein
@@ -177,6 +246,9 @@ content:
             type: string
           - name: ueberschrift_rot
             label: Überschrift, roter Teil
+            type: string
+          - name: ueber_uns_titel
+            label: Leitsatz „Wir über uns“
             type: string
           - name: text
             label: Text „Über uns“
@@ -218,12 +290,65 @@ content:
             options:
               media: dateien
               extensions: [pdf]
-          - name: junges_theater_titel
-            label: Junges Theater, Überschrift
+
+      - name: junges-theater
+        label: Junges Theater
+        type: file
+        path: src/data/junges-theater.json
+        format: json
+        fields:
+          - name: titel
+            label: Überschrift
             type: string
-          - name: junges_theater_text
-            label: Junges Theater, Text
+          - name: titel_kursiv
+            label: Überschrift, kursiv
+            type: string
+          - name: intro
+            label: Einleitung
             type: text
+          - name: aktuell_titel
+            label: Aktuelles Stück des JT, Titel
+            description: Leer lassen, solange es noch kein Stück gibt.
+            type: string
+          - name: aktuell_text
+            label: Aktuelles Stück des JT, Beschreibung
+            type: text
+          - name: aktuell_termine
+            label: Aktuelles Stück des JT, Termine
+            description: Z. B. „Sommerfest am 12. Juli, 15 Uhr“
+            type: string
+          - name: aktuell_bild
+            label: Aktuelles Stück des JT, Foto
+            type: image
+            options:
+              media: bilder
+          - name: altersgruppe
+            label: Für wen (Altersgruppe)
+            type: string
+          - name: probenzeit
+            label: Probenzeiten
+            type: string
+          - name: probenort
+            label: Probenort
+            type: string
+          - name: team
+            label: Team
+            type: object
+            list: true
+            fields:
+              - name: name
+                label: Name
+                type: string
+              - name: aufgabe
+                label: Aufgabe
+                type: string
+          - name: mitmachen_text
+            label: Mitmachen, Text
+            type: text
+          - name: kontakt
+            label: Kontakt-E-Mail fürs JT
+            description: Optional. Sonst gilt die E-Mail aus den Einstellungen.
+            type: string
 
       - name: chronik
         label: Chronik
@@ -280,6 +405,10 @@ content:
           - name: jahr
             label: Jahr
             type: number
+          - name: fotograf
+            label: Foto von
+            description: Name der Fotografin / des Fotografen
+            type: string
 
   - name: website
     label: Website
@@ -299,6 +428,9 @@ content:
             type: text
           - name: email
             label: E-Mail
+            type: string
+          - name: telefon
+            label: Telefon (allgemein)
             type: string
           - name: vorsitz
             label: Vorstand
@@ -326,6 +458,15 @@ content:
           - name: spielort_karte
             label: Link zur Karte
             type: string
+          - name: anfahrt_oepnv
+            label: Anfahrt mit Bus und Bahn
+            type: text
+          - name: anfahrt_parken
+            label: Anfahrt mit dem Auto / Parken
+            type: text
+          - name: anfahrt_barrierefrei
+            label: Barrierefreiheit
+            type: text
           - name: vorverkauf_ab
             label: Vorverkauf ab
             type: date
@@ -334,9 +475,17 @@ content:
           - name: vorverkauf_stellen
             label: Vorverkaufsstellen
             type: string
-          - name: preise
-            label: Eintrittspreise
-            description: Z. B. „12 €, ermäßigt 8 €“. Leer lassen, wenn keine Preise gezeigt werden sollen.
+          - name: kartentelefon
+            label: Kartentelefon
+            description: Erscheint bei den Eckdaten, auf der Kartenseite und ist auf dem Handy antippbar.
+            type: string
+          - name: kartentelefon_zeiten
+            label: Kartentelefon, erreichbar
+            description: Z. B. „Mo bis Fr, 17 bis 19 Uhr“
+            type: string
+          - name: warteliste
+            label: Warteliste bei ausverkauften Terminen
+            description: E-Mail, Telefonnummer oder Link. Leer = Kartentelefon bzw. E-Mail.
             type: string
           - name: ticketshop_url
             label: Link zum Ticketshop
@@ -367,6 +516,50 @@ content:
           - name: verband
             label: Verband
             type: string
+          - name: presse_text
+            label: Presse, Text
+            type: text
+          - name: presse_kontakt
+            label: Presse, Ansprechpartner
+            type: string
+          - name: presse_email
+            label: Presse, E-Mail
+            description: Optional. Sonst gilt die allgemeine E-Mail.
+            type: string
+          - name: pressemappe
+            label: Pressemappe (PDF)
+            type: file
+            options:
+              media: dateien
+              extensions: [pdf]
+          - name: sponsoren
+            label: Sponsoren
+            type: object
+            list: true
+            fields:
+              - name: name
+                label: Name
+                type: string
+              - name: url
+                label: Website
+                type: string
+              - name: logo
+                label: Logo
+                type: image
+                options:
+                  media: bilder
+          - name: social
+            label: Social Media
+            description: Z. B. Instagram, Facebook. Erscheint in der Fußzeile.
+            type: object
+            list: true
+            fields:
+              - name: name
+                label: Name
+                type: string
+              - name: url
+                label: Link
+                type: string
 
       - name: seiten
         label: Impressum und Datenschutz

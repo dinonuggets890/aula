@@ -1,0 +1,76 @@
+---
+/**
+ * Verein: Wir über uns · Mitmachen und Mitgliedschaft · Frühere Aufführungen
+ * (WordPress: Seite „Verein“; Texte aus Verein › Über uns und Mitmachen, Liste aus der Chronik)
+ */
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Seitenkopf from '../components/Seitenkopf.astro';
+import Unternav from '../components/Unternav.astro';
+import Mitmachen from '../components/Mitmachen.astro';
+import { club, getChronik, pfad, site } from '../lib/data';
+
+const chronik = (await getChronik()).filter((e) => e.art !== 'hinweis');
+const auszug = chronik.slice(0, 8);
+const unter = [
+  { href: '#ueber-uns', text: 'Wir über uns' },
+  { href: '#mitmachen', text: 'Mitmachen und Mitgliedschaft' },
+  { href: '#fruehere', text: 'Frühere Aufführungen' },
+];
+---
+<Base titel="Verein" beschreibung={club.text.split('\n')[0]} aktiv="verein">
+  <Seitenkopf label="Der Verein" gross={club.ueberschrift} kursiv={club.ueberschrift_rot} />
+  <Unternav punkte={unter} label="Abschnitte zum Verein" />
+
+  <section id="ueber-uns" class="wrap abschnitt" aria-labelledby="ueber-uns-titel" style="display:flex;flex-direction:column;gap:clamp(56px,5.6vw,80px)">
+    <div class="zwei-spalten" style="align-items:start">
+      <div class="stapel">
+        <p class="label">Wir über uns</p>
+        <h2 id="ueber-uns-titel" class="zitat">{club.ueber_uns_titel}</h2>
+      </div>
+      <div class="prosa">
+        {club.text.split(/\n\s*\n/).map((absatz) => <p>{absatz}</p>)}
+      </div>
+    </div>
+    {club.zahlen?.length > 0 && (
+      <dl class="zahlen">
+        {club.zahlen.map((z) => <div><dt>{z.text}</dt><dd>{z.wert}</dd></div>)}
+      </dl>
+    )}
+    {site.vorsitz.length > 0 && (
+      <div class="vorstand">
+        <p class="kicker rot">Vorstand</p>
+        <dl class="vorstand__liste">
+          {site.vorsitz.map((v) => <div><dt>{v.rolle}</dt><dd>{v.name}</dd></div>)}
+        </dl>
+        <p class="klein">{site.verband}</p>
+      </div>
+    )}
+  </section>
+
+  <Mitmachen />
+
+  <section id="fruehere" class="wrap abschnitt" aria-labelledby="fruehere-titel">
+    <div class="stapel" style="gap:40px">
+      <div class="kopfzeile">
+        <div class="stapel">
+          <p class="label">Frühere Aufführungen</p>
+          <h2 id="fruehere-titel" class="display h-l">Zuletzt auf <span class="serif">unserer</span> Bühne</h2>
+        </div>
+        <a class="btn btn--rot" href={pfad('/chronik/')}>Alle {chronik.length} Produktionen<Icon name="pfeil" /></a>
+      </div>
+      <ol class="zeilen">
+        {auszug.map((e) => (
+          <li>
+            <a class="zeile" href={pfad('/chronik/')}>
+              <span class="zeile__jahr">{e.jahr}</span>
+              <span class="zeile__titel">{e.titel}</span>
+              <span class="zeile__info">{e.info}</span>
+              <span class="zeile__art"><span class="tag">{e.art === 'klein' ? 'Kleines Stück' : 'Abendfüllend'}</span></span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</Base>

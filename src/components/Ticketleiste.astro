@@ -1,0 +1,33 @@
+---
+/**
+ * Smartphone: Ticket-Button am unteren Rand angeheftet (nur wenn es kommende Vorstellungen gibt).
+ * Sieht aus wie ein Ticketabriss.
+ */
+import Icon from './Icon.astro';
+import { fmt, getStueckInfo, pfad } from '../lib/data';
+
+const { d, naechste } = await getStueckInfo();
+---
+{d && naechste && (
+  <div class="ticketleiste" data-ticketleiste>
+    <p class="ticketleiste__info">
+      <span class="kicker">Nächste Vorstellung</span>
+      <b>{fmt.wochentagKurz(naechste.datum)}, {fmt.tagZahl(naechste.datum)}. {fmt.monat(naechste.datum)} · {naechste.uhrzeit}</b>
+    </p>
+    <a class="btn btn--rot ticketleiste__btn" href={pfad('/karten/')}><Icon name="ticket" size={18} />Tickets</a>
+  </div>
+)}
+
+<script>
+  // Einblenden, sobald die Ticket-Buttons der Bühne aus dem Bild gescrollt sind
+  // (auf Seiten ohne Bühne sofort)
+  const leiste = document.querySelector<HTMLElement>('[data-ticketleiste]');
+  const buttons = document.querySelector('.hero__aktionen');
+  if (leiste) {
+    if (buttons && 'IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => leiste.classList.toggle('ticketleiste--da', !e.isIntersecting)).observe(buttons);
+    } else {
+      leiste.classList.add('ticketleiste--da');
+    }
+  }
+</script>

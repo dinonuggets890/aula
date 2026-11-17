@@ -1,0 +1,15 @@
+---
+/**
+ * Markierte Lücke für fehlende Inhalte. Erscheint NUR in der Staging-Vorschau
+ * (SGN_PLATZHALTER=1). Auf der Live-Seite rendert die Komponente nichts.
+ */
+import { platzhalter } from '../lib/data';
+
+interface Props {
+  text: string;
+  block?: boolean;
+}
+const { text, block = false } = Astro.props;
+const Tag = block ? 'p' : 'span';
+---
+{platzhalter && <Tag class:list={['luecke', { 'luecke--block': block }]} title="Platzhalter: nur in der Staging-Vorschau sichtbar">[{text}]</Tag>}

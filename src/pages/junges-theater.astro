@@ -1,0 +1,119 @@
+---
+/**
+ * Junges Theater: aktuelles Stück des JT · Team und Proben · Mitmachen im JT · bisher gespielt
+ * (WordPress: Seite „Junges Theater“ mit Feldgruppe, „bisher gespielt“ aus der Chronik mit Art „klein“)
+ */
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Bild from '../components/Bild.astro';
+import Luecke from '../components/Luecke.astro';
+import Seitenkopf from '../components/Seitenkopf.astro';
+import Unternav from '../components/Unternav.astro';
+import { getChronik, jt, mailto, pfad, platzhalter, site, tel } from '../lib/data';
+import { navigation } from '../lib/navigation';
+
+const bisher = (await getChronik()).filter((e) => e.art === 'klein');
+const bisherAuszug = bisher.slice(0, 15);
+const unter = [
+  ...navigation.find((n) => n.key === 'jt')!.unter.map((u) => ({ ...u, href: u.href.replace('/junges-theater/', '') })),
+  ...(bisher.length ? [{ href: '#bisher', text: 'Bisher gespielt' }] : []),
+];
+const kontaktMail = /@/.test(jt.kontakt) ? `mailto:${jt.kontakt}` : `${mailto}?subject=${encodeURIComponent('Junges Theater')}`;
+const probenplan = [
+  { was: 'Für wen', wert: jt.altersgruppe, luecke: 'Altersgruppe' },
+  { was: 'Wann', wert: jt.probenzeit, luecke: 'Probenzeiten' },
+  { was: 'Wo', wert: jt.probenort, luecke: 'Probenort' },
+].filter((p) => p.wert || platzhalter);
+---
+<Base titel="Junges Theater" beschreibung={jt.intro} aktiv="jt">
+  <Seitenkopf label="Junges Theater der SGN" gross={jt.titel} kursiv={jt.titel_kursiv} intro={jt.intro} />
+  <Unternav punkte={unter} label="Abschnitte Junges Theater" />
+
+  <section id="aktuell" class="wrap abschnitt jt-aktuell" aria-labelledby="jt-aktuell-titel">
+    <div class="stage grain jt-buehne">
+      <div class="licht" aria-hidden="true"></div>
+      <div class="jt-buehne__text">
+        <p class="label">Aktuelles Stück des Jungen Theaters</p>
+        {jt.aktuell_titel ? (
+          <>
+            <h2 id="jt-aktuell-titel" class="display h-l">{jt.aktuell_titel}</h2>
+            {jt.aktuell_text && <p class="lead pretty" style="color:var(--s-text)">{jt.aktuell_text}</p>}
+            {jt.aktuell_termine && <p class="jt-buehne__termine"><Icon name="ticket" size={20} />{jt.aktuell_termine}</p>}
+          </>
+        ) : (
+          <>
+            <h2 id="jt-aktuell-titel" class="display h-l">Hinter dem Vorhang <span class="serif">wird geprobt.</span></h2>
+            <p class="lead pretty" style="color:var(--s-text)">Das nächste Stück des Jungen Theaters ist in Arbeit. Titel und Termine stehen hier, sobald sie feststehen.</p>
+            <Luecke block text="Titel, Beschreibung, Termine und Foto des aktuellen JT-Stücks" />
+          </>
+        )}
+      </div>
+      {jt.aktuell_bild
+        ? <div class="jt-buehne__bild foto__bild"><Bild src={jt.aktuell_bild} alt={jt.aktuell_titel ? `Szenenfoto aus ${jt.aktuell_titel}` : 'Junges Theater'} sizes="(max-width: 700px) 100vw, 45vw" /></div>
+        : <span class="rahmen jt-buehne__rahmen" aria-hidden="true"><span>JT</span></span>}
+    </div>
+  </section>
+
+  <section id="proben" class="wrap abschnitt" aria-labelledby="proben-titel" style="padding-top:0">
+    <div class="zwei-spalten" style="align-items:start">
+      <div class="stapel">
+        <p class="label">Team und Proben</p>
+        <h2 id="proben-titel" class="display h-l">Der <span class="serif">Probenplan</span></h2>
+        {probenplan.length > 0 ? (
+          <dl class="aushang">
+            {probenplan.map((p) => <div><dt>{p.was}</dt><dd>{p.wert || <Luecke text={p.luecke} />}</dd></div>)}
+          </dl>
+        ) : (
+          <p class="body-2">Probenzeiten und Ort erfahren Sie per E-Mail bei uns.</p>
+        )}
+      </div>
+      {(jt.team.length > 0 || platzhalter) && (
+        <div class="stapel">
+          <p class="kicker rot">Das Team</p>
+          {jt.team.length > 0
+            ? <ul class="team-liste">{jt.team.map((t) => <li><b>{t.name}</b><span>{t.aufgabe}</span></li>)}</ul>
+            : <ul class="team-liste">{[1, 2].map(() => <li><b><Luecke text="Name" /></b><span><Luecke text="Spielleitung, Betreuung …" /></span></li>)}</ul>}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section id="mitmachen" class="wrap" aria-labelledby="jt-mitmachen-titel" style="padding-bottom:clamp(80px,9vw,128px)">
+    <div class="jt-einladung">
+      <p class="jt-einladung__stempel" aria-hidden="true">Bühne<br />frei!</p>
+      <div class="stapel">
+        <p class="label label--hell">Mitmachen im Jungen Theater</p>
+        <h2 id="jt-mitmachen-titel" class="display h-l">Spielst <span class="serif">du mit?</span></h2>
+        <p class="mitmachen__text">{jt.mitmachen_text}</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn btn--papier" href={kontaktMail}><Icon name="mail" />Schreib uns</a>
+          {site.telefon && <a class="btn btn--ghost" href={tel(site.telefon)}><Icon name="telefon" />Anrufen</a>}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {bisher.length > 0 && (
+    <section id="bisher" class="wrap" aria-labelledby="bisher-titel" style="padding-bottom:clamp(88px,9.5vw,140px)">
+      <div class="stapel" style="border-top:2px solid var(--linie-stark);padding-top:clamp(56px,5.6vw,80px);gap:40px">
+        <div class="kopfzeile">
+          <div class="stapel">
+            <p class="label">Bisher gespielt</p>
+            <h2 id="bisher-titel" class="display h-l">{bisher.length} kleine Stücke, <span class="serif">viel Applaus.</span></h2>
+            <p class="body-2">Aus unserer Chronik: kleine Stücke und Auftritte mit Kindern und Jugendlichen.</p>
+          </div>
+          {bisher.length > bisherAuszug.length && <a class="btn btn--rot" href={pfad('/chronik/?art=klein')}>Alle {bisher.length} in der Chronik<Icon name="pfeil" /></a>}
+        </div>
+        <ul class="abrisse">
+          {bisherAuszug.map((e, i) => (
+            <li class="abriss" style={`--kipp-i:${(i % 3) - 1}`}>
+              <span class="abriss__jahr">{e.jahr}</span>
+              <b class="abriss__titel">{e.titel}</b>
+              {e.info && <span class="abriss__info">{e.info}</span>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+</Base>

@@ -1,0 +1,44 @@
+---
+/**
+ * Mitmachen und Mitglied werden (rote Fläche). Auf Startseite und Vereinsseite.
+ * (WordPress: Block-Pattern „mitmachen“, Texte aus Verein › Über uns und Mitmachen)
+ */
+import Icon from './Icon.astro';
+import { club, dateiDa, jt, mailto, pfad, site } from '../lib/data';
+
+const antragDa = dateiDa(club.mitgliedsantrag);
+const anlageDa = dateiDa(club.datenschutz_anlage);
+---
+<section id="mitmachen" class="mitmachen" aria-labelledby="mitmachen-titel">
+  <img class="mitmachen__marke" src={pfad('/img/bildmarke-weiss.svg')} alt="" aria-hidden="true" loading="lazy" />
+  <div class="wrap abschnitt zwei-spalten" style="position:relative;align-items:start">
+    <div class="stapel">
+      <p class="label label--hell">Mitmachen und Mitglied werden</p>
+      <h2 id="mitmachen-titel" class="display mitmachen__titel">
+        {club.mitmachen_titel}<br /><span class="serif">{club.mitmachen_titel_kursiv}</span>
+      </h2>
+      <ul class="mitmachen__rollen" aria-label="Wo Sie mitmachen können">
+        {['Bühne', 'Technik', 'Kostüm', 'Maske', 'Kasse', 'Kulissen'].map((r, i) => <li style={`--i:${i}`}>{r}</li>)}
+      </ul>
+    </div>
+    <div class="stapel" style="padding-top:clamp(0px,3vw,44px)">
+      <p class="mitmachen__text">{club.mitmachen_text}</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        {antragDa
+          ? <a class="btn btn--papier" href={pfad(club.mitgliedsantrag)} download><Icon name="download" />Mitglied werden (Antrag, PDF)</a>
+          : <a class="btn btn--papier" href={`${mailto}?subject=${encodeURIComponent('Mitgliedschaft')}`}>Mitglied werden<Icon name="pfeil" /></a>}
+        <a class="btn btn--ghost" href={mailto}>Kontakt aufnehmen</a>
+      </div>
+      <p class="klein">
+        {club.mitmachen_hinweis} E-Mail: <a href={mailto}>{site.email}</a>.
+        {anlageDa && <> Die <a href={pfad(club.datenschutz_anlage)} download>Anlage zum Datenschutz (PDF)</a> gehört zum Antrag.</>}
+      </p>
+      <a class="jt" href={pfad('/junges-theater/')}>
+        <p class="kicker">Junges Theater der SGN</p>
+        <p class="jt__titel">{jt.titel} <span class="serif">{jt.titel_kursiv}</span></p>
+        <p>{jt.intro}</p>
+        <span class="jt__mehr">Zum Jungen Theater<Icon name="pfeil" size={16} /></span>
+      </a>
+    </div>
+  </div>
+</section>

@@ -6,6 +6,20 @@ import { z } from 'astro/zod';
 // Diese Helfer machen das Schema tolerant, damit der Build nicht bricht.
 const text = z.string().nullish().transform((v) => (v ?? '').trim());
 const flag = z.boolean().nullish().transform((v) => v ?? false);
+/** Liste aus Pages CMS: leere Einträge (alle Felder leer) fliegen raus. */
+const liste = <T extends z.ZodRawShape>(form: T) =>
+  z
+    .array(z.object(form))
+    .nullish()
+    .transform((v) => (v ?? []).filter((e) => Object.values(e).some((x) => x !== '' && x !== false)));
+/** Bildliste (Pages CMS: type image, list: true) */
+const bilderliste = z
+  .array(z.string().nullish())
+  .nullish()
+  .transform((v) => (v ?? []).map((x) => (x ?? '').trim()).filter(Boolean));
+/** verfügbar | wenige | ausverkauft (älteres Feld „ausverkauft“ bleibt gültig) */
+const kartenstatus = z.enum(['verfuegbar', 'wenige', 'ausverkauft']).nullish();
+
 const datum = z
   .union([z.string(), z.date()])
   .transform((v) => (typeof v === 'string' ? v.slice(0, 10) : v.toISOString().slice(0, 10)));
@@ -39,12 +53,25 @@ const stuecke = defineCollection({
           datum,
           uhrzeit: text,
           premiere: flag,
+          status: kartenstatus,
           ausverkauft: flag,
           ticket_url: text,
         }),
       )
       .nullish()
       .transform((v) => v ?? []),
+    // Besetzung und Team (Theaterzettel)
+    besetzung: liste({ rolle: text, name: text }),
+    team: liste({ aufgabe: text, name: text }),
+    ensemble_bild: text,
+    // Preise und Abendkasse
+    preis: text,
+    preis_ermaessigt: text,
+    ermaessigt_fuer: text,
+    abendkasse: text,
+    // Hinter den Kulissen
+    probenfotos: bilderliste,
+    probenfotos_fotograf: text,
   }),
 });
 

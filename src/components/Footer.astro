@@ -1,5 +1,8 @@
 ---
-import { site, pfad } from '../lib/data';
+import Icon from './Icon.astro';
+import Luecke from './Luecke.astro';
+import { site, pfad, mailto, platzhalter, tel } from '../lib/data';
+import { navigation } from '../lib/navigation';
 
 interface Props {
   kompakt?: boolean;
@@ -10,31 +13,35 @@ const jahr = new Date().getFullYear();
 <footer class:list={['fuss', { 'fuss--kompakt': kompakt }]}>
   <div class="wrap fuss__inner">
     {!kompakt && <p class="fuss__gross" aria-hidden="true">Vorhang auf<span class="rot">.</span></p>}
-    <div class="fuss__mitte">
-      <img src={pfad('/img/logo-weiss.svg')} alt="Die Aula, Schauspielgruppe Neusäß e.V." width="859" height="296" loading="lazy" />
-      <nav class="fuss__nav" aria-label="Fußzeile">
-        <div>
-          <p class="kicker">Programm</p>
-          <a href={pfad('/#spielplan')}>Spielplan</a>
-          <a href={pfad('/#stueck')}>Das Stück</a>
-          <a href={pfad('/karten/')}>Karten</a>
-        </div>
-        <div>
-          <p class="kicker">Verein</p>
-          <a href={pfad('/#verein')}>Über uns</a>
-          <a href={pfad('/chronik/')}>Chronik</a>
-          <a href={pfad('/fotos/')}>Fotoalbum</a>
-          <a href={pfad('/#mitmachen')}>Mitgliedschaft</a>
-        </div>
-        <div>
-          <p class="kicker">Rechtliches</p>
-          <a href={pfad('/impressum/')}>Impressum</a>
-          <a href={pfad('/datenschutz/')}>Datenschutz</a>
-        </div>
+    <div class="fuss__raster">
+      <div class="fuss__kontakt">
+        <img src={pfad('/img/logo-weiss.svg')} alt="Die Aula, Schauspielgruppe Neusäß e.V." width="859" height="296" loading="lazy" />
+        <address>
+          <a href={mailto}><Icon name="mail" size={16} />{site.email}</a>
+          {site.telefon ? <a href={tel(site.telefon)}><Icon name="telefon" size={16} />{site.telefon}</a> : <Luecke text="Telefonnummer" />}
+          <a href={pfad('/kontakt/#anfahrt')}><Icon name="ort" size={16} />{site.spielort_kurz}, {site.spielort_ort.replace(/^\d+\s*/, '')}</a>
+        </address>
+      </div>
+      <nav class="fuss__spalte" aria-label="Seiten">
+        <p class="kicker">Seiten</p>
+        {navigation.map((l) => <a href={pfad(l.href)}>{l.text}</a>)}
+        <a href={pfad('/karten/')}>Tickets</a>
       </nav>
+      {(site.social.length > 0 || platzhalter) && (
+        <div class="fuss__spalte">
+          <p class="kicker">Folgen</p>
+          {site.social.length > 0
+            ? site.social.map((s) => <a href={s.url} target="_blank" rel="noopener">{s.name}<Icon name="extern" size={14} /></a>)
+            : <Luecke text="Instagram, Facebook … falls vorhanden" />}
+        </div>
+      )}
     </div>
     <div class="fuss__unten">
       <p>© {jahr} {site.seitentitel} · {site.registergericht}, {site.registernummer}</p>
+      <p class="fuss__recht">
+        <a href={pfad('/impressum/')}>Impressum</a>
+        <a href={pfad('/datenschutz/')}>Datenschutz</a>
+      </p>
       <p>{site.verband}</p>
     </div>
   </div>

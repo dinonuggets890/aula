@@ -1,0 +1,146 @@
+---
+/**
+ * Die Bühne: großer Kopfbereich zum aktuellen Stück.
+ * - Titel, Autor, Kurztext, Tickets- und Trailer-Button (ohne Scrollen sichtbar)
+ * - Eckdaten: nächste Vorstellung, Spielort, Karten (Preis), Kartentelefon
+ * - „Vorhang auf“: Der Trailer spielt direkt auf der Bühne, ein Vorhang öffnet sich.
+ * (WordPress: Template-Part „buehne“, Daten aus dem aktuellen Stück)
+ */
+import Icon from './Icon.astro';
+import Luecke from './Luecke.astro';
+import { fmt, pfad, platzhalter, site, tel, type StueckInfo } from '../lib/data';
+
+interface Props {
+  info: StueckInfo;
+  /** start: Startseite (h1, Eckdaten) · seite: Kopf der Seite „Aktuelles Stück“ */
+  variante?: 'start' | 'seite';
+}
+const { info, variante = 'start' } = Astro.props;
+const { d, erste, kommend, naechste, spielzeit, hinweis, trailerDa, preise } = info;
+
+const zeile1 = d?.titel_zeile1 || '';
+const zeile2 = d?.titel_zeile2 || (zeile1 ? '' : d?.titel || '');
+const langerTitel = zeile2.length > 14 && !zeile1;
+const ticketsHref = pfad(kommend.length ? '/karten/' : '/aktuelles-stueck/#termine');
+---
+<section class:list={['hero-rahmen', `hero-rahmen--${variante}`]} aria-labelledby="hero-titel">
+  <div class="stage grain hero" data-stueckbuehne>
+    <div class="licht" aria-hidden="true"></div>
+    {d ? (
+      <>
+        <div class="hero__oben">
+          <p class="label">{variante === 'seite' ? 'Aktuelles Stück' : 'Aktuelle Produktion'} {erste ? fmt.jahr(erste.datum) : ''}</p>
+          {hinweis && <p>{hinweis}</p>}
+        </div>
+        <h1 id="hero-titel" class="hero__titel">
+          <span class="hero__zeile1">
+            {zeile1 && <span class="hero__serif auftritt">{zeile1}</span>}
+            {d.rahmen_text && <span class="rahmen auftritt" aria-hidden="true"><span>{d.rahmen_text}</span></span>}
+          </span>
+          {zeile2 && <span class:list={['hero__gross', 'auftritt', 'auftritt--2', { 'hero__gross--lang': langerTitel }]}>{zeile2}</span>}
+        </h1>
+        <div class="hero__unten">
+          <div>
+            {d.autor && <p class="hero__autor">{d.genre ? `${d.genre.split(',')[0]} von` : 'von'} {d.autor}</p>}
+            {d.kurztext && <p class="hero__text lead pretty">{d.kurztext}</p>}
+            {spielzeit && <p class="hero__zeitraum">{spielzeit} · {site.spielort_kurz}, Neusäß</p>}
+          </div>
+          <div class="hero__aktionen">
+            <a class="btn btn--rot btn--gross" href={ticketsHref}>
+              <Icon name="ticket" size={20} />{kommend.length ? 'Tickets sichern' : 'Zu den Terminen'}
+            </a>
+            {trailerDa ? (
+              <button class="btn btn--ghost btn--gross" type="button" data-leinwand-auf aria-controls="leinwand" aria-expanded="false">
+                <Icon name="play" size={18} />Trailer ansehen
+              </button>
+            ) : d.trailer ? (
+              <Luecke text={`Trailer-Datei fehlt: ${d.trailer.split('/').pop()}`} />
+            ) : null}
+          </div>
+        </div>
+        <dl class="fakten">
+          {naechste ? (
+            <div><dt>Nächste Vorstellung</dt><dd>{fmt.langKurz(naechste.datum)}, {naechste.uhrzeit} Uhr</dd></div>
+          ) : spielzeit ? (
+            <div><dt>Spielzeit</dt><dd>{spielzeit}</dd></div>
+          ) : null}
+          <div><dt>Spielort</dt><dd><a href={pfad('/kontakt/#anfahrt')}>{site.spielort_kurz}</a></dd></div>
+          {preise ? (
+            <div><dt>Karten</dt><dd>{preise}</dd></div>
+          ) : site.vorverkauf_stellen ? (
+            <div><dt>Vorverkauf</dt><dd>{site.vorverkauf_stellen} <Luecke text="Preis · ermäßigt" /></dd></div>
+          ) : null}
+          {site.kartentelefon ? (
+            <div><dt>Kartentelefon</dt><dd><a href={tel(site.kartentelefon)}>{site.kartentelefon}</a></dd></div>
+          ) : platzhalter ? (
+            <div><dt>Kartentelefon</dt><dd><Luecke text="Telefonnummer" /></dd></div>
+          ) : null}
+        </dl>
+
+        {trailerDa && (
+          <div class="leinwand" id="leinwand" data-leinwand hidden>
+            <div class="leinwand__bild">
+              <video
+                src={pfad(d.trailer)}
+                poster={d.trailer_poster ? pfad(d.trailer_poster) : undefined}
+                preload="none"
+                playsinline
+                controls
+                aria-label={`Trailer: ${d.titel}`}
+              ></video>
+            </div>
+            <div class="leinwand__vorhang leinwand__vorhang--l" aria-hidden="true"></div>
+            <div class="leinwand__vorhang leinwand__vorhang--r" aria-hidden="true"></div>
+            <button class="btn btn--papier btn--klein leinwand__zu" type="button" data-leinwand-zu>
+              <Icon name="schliessen" size={16} />Zurück zur Bühne
+            </button>
+          </div>
+        )}
+      </>
+    ) : (
+      <>
+        <div class="hero__oben"><p class="label">{site.seitentitel}</p></div>
+        <h1 id="hero-titel" class="hero__titel">
+          <span class="hero__serif auftritt">Theater</span>
+          <span class="hero__gross auftritt auftritt--2">aus Neusäß</span>
+        </h1>
+        <div class="hero__unten">
+          <p class="hero__text lead">Unsere nächste Produktion ist in Vorbereitung. Neue Termine folgen.</p>
+          <div class="hero__aktionen"><a class="btn btn--rot" href={pfad('/chronik/')}>Frühere Aufführungen<Icon name="pfeil" /></a></div>
+        </div>
+      </>
+    )}
+  </div>
+</section>
+
+<script>
+  // „Vorhang auf“: Trailer direkt auf der Bühne abspielen
+  document.querySelectorAll<HTMLElement>('[data-stueckbuehne]').forEach((buehne) => {
+    const auf = buehne.querySelector<HTMLButtonElement>('[data-leinwand-auf]');
+    const leinwand = buehne.querySelector<HTMLElement>('[data-leinwand]');
+    const zu = buehne.querySelector<HTMLButtonElement>('[data-leinwand-zu]');
+    const video = leinwand?.querySelector('video');
+    if (!auf || !leinwand || !zu || !video) return;
+    const ruhig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let timer = 0;
+
+    function oeffnen() {
+      leinwand!.hidden = false;
+      auf!.setAttribute('aria-expanded', 'true');
+      requestAnimationFrame(() => requestAnimationFrame(() => leinwand!.classList.add('offen')));
+      zu!.focus();
+      timer = window.setTimeout(() => video!.play().catch(() => {}), ruhig ? 0 : 650);
+    }
+    function schliessen() {
+      clearTimeout(timer);
+      video!.pause();
+      leinwand!.classList.remove('offen');
+      auf!.setAttribute('aria-expanded', 'false');
+      window.setTimeout(() => { leinwand!.hidden = true; }, ruhig ? 0 : 600);
+      auf!.focus();
+    }
+    auf.addEventListener('click', oeffnen);
+    zu.addEventListener('click', schliessen);
+    leinwand.addEventListener('keydown', (e) => { if (e.key === 'Escape') schliessen(); });
+  });
+</script>

@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Bild from '../components/Bild.astro';
-import { getChronik } from '../lib/data';
+import { getChronik, pfad } from '../lib/data';
 
 const eintraege = await getChronik();
 const stuecke = eintraege.filter((e) => e.art !== 'hinweis');
@@ -16,9 +16,9 @@ for (const e of eintraege) {
   gruppe.eintraege.push(e);
 }
 ---
-<Base titel="Chronik" beschreibung={`Alle Produktionen der Schauspielgruppe Neusäß seit ${erstesJahr}.`} aktiv="chronik" footerKompakt>
+<Base titel="Chronik" beschreibung={`Alle Produktionen der Schauspielgruppe Neusäß seit ${erstesJahr}.`} aktiv="verein" footerKompakt>
   <section class="wrap seitenkopf" aria-labelledby="chronik-titel">
-    <p class="label">Chronik</p>
+    <p class="label"><a class="label__link" href={pfad('/verein/')}>Verein</a> · Frühere Aufführungen</p>
     <div class="kopfzeile">
       <h1 id="chronik-titel" class="auftritt">
         <span class="seitenkopf__gross">Alle Stücke</span>
@@ -97,4 +97,7 @@ for (const e of eintraege) {
       if (zaehler) zaehler.textContent = String(gesamt);
     });
   });
+  // Vorauswahl per Adresse, z. B. /chronik/?art=klein (Link von der Seite „Junges Theater“)
+  const vorwahl = new URLSearchParams(location.search).get('art');
+  if (vorwahl) filter?.querySelector<HTMLButtonElement>(`button[data-art="${CSS.escape(vorwahl)}"]`)?.click();
 </script>

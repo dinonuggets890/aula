@@ -1,14 +1,15 @@
 ---
 import Icon from './Icon.astro';
-import { fmt, type Termin } from '../lib/data';
+import { fmt, statusText, wartelisteLink, type Termin } from '../lib/data';
 
 interface Props {
   termin: Termin;
 }
 const { termin: t } = Astro.props;
 const beschriftung = `${fmt.wochentag(t.datum)}, ${fmt.tagMonat(t.datum)}, ${t.uhrzeit} Uhr`;
+const warteliste = wartelisteLink();
 ---
-<li class:list={['ticket', { 'ticket--vorbei': t.vorbei }]} data-monat={t.monat}>
+<li class:list={['ticket', `ticket--${t.vorbei ? 'vorbei' : t.status}`]} data-monat={t.monat}>
   {t.premiere && <span class="stempel">Premiere</span>}
   <div class="ticket__oben">
     <p class="ticket__zeit">{fmt.wochentag(t.datum)} · {t.uhrzeit} Uhr</p>
@@ -16,21 +17,29 @@ const beschriftung = `${fmt.wochentag(t.datum)}, ${fmt.tagMonat(t.datum)}, ${t.u
       <span class="ticket__tag">{fmt.tag(t.datum)}</span>
       <span class="ticket__monat">{t.monat}</span>
     </p>
+    {!t.vorbei && (
+      <p class:list={['ticket__status', `ticket__status--${t.status}`]}>
+        <span class="ticket__punkt" aria-hidden="true"></span>{statusText[t.status]}
+      </p>
+    )}
   </div>
+  {t.status === 'ausverkauft' && !t.vorbei && <span class="ticket__ausverkauft" aria-hidden="true">Ausverkauft</span>}
   <div class="ticket__perfo" aria-hidden="true"></div>
   {t.vorbei ? (
     <p class="ticket__link ticket__link--aus"><span>Gespielt</span></p>
-  ) : t.ausverkauft ? (
-    <p class="ticket__link ticket__link--aus"><span>Ausverkauft</span></p>
+  ) : t.status === 'ausverkauft' ? (
+    <a class="ticket__link ticket__link--warteliste" href={warteliste.href} aria-label={`Warteliste für ${beschriftung}`}>
+      <span>Warteliste</span><Icon name="pfeil" />
+    </a>
   ) : (
     <a
       class="ticket__link"
       href={t.href}
-      aria-label={`Karten für ${beschriftung}`}
+      aria-label={`Karten kaufen für ${beschriftung}`}
       target={t.extern ? '_blank' : undefined}
       rel={t.extern ? 'noopener' : undefined}
     >
-      <span>Karten</span><Icon name={t.extern ? 'extern' : 'pfeil'} />
+      <span>Karten kaufen</span><Icon name={t.extern ? 'extern' : 'pfeil'} />
     </a>
   )}
 </li>

@@ -5,16 +5,20 @@ import '@fontsource-variable/playfair-display/wght-italic.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Ticketleiste from '../components/Ticketleiste.astro';
 import { site, pfad, noindex } from '../lib/data';
+import type { Bereich } from '../lib/navigation';
 
 interface Props {
   titel?: string;
   beschreibung?: string;
-  aktiv?: 'chronik' | 'karten' | 'fotos' | '';
+  aktiv?: Bereich | '';
   footerKompakt?: boolean;
+  /** Ticket-Button am unteren Rand (Smartphone); auf der Kartenseite aus */
+  ticketleiste?: boolean;
   jsonLd?: object | null;
 }
-const { titel, beschreibung = site.beschreibung, aktiv = '', footerKompakt = false, jsonLd = null } = Astro.props;
+const { titel, beschreibung = site.beschreibung, aktiv = '', footerKompakt = false, ticketleiste = true, jsonLd = null } = Astro.props;
 const voll = titel ? `${titel} · ${site.seitentitel}` : site.seitentitel;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogBild = new URL(pfad('/og.jpg'), Astro.site);
@@ -49,5 +53,6 @@ const buehne = site.buehnenflaechen === 'hell' ? 'hell' : 'dunkel';
       <slot />
     </main>
     <Footer kompakt={footerKompakt} />
+    {ticketleiste && <Ticketleiste />}
   </body>
 </html>

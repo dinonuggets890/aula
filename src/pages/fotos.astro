@@ -1,26 +1,58 @@
 ---
+/**
+ * Fotoalbum, gegliedert nach Stück und Jahr, mit Namen der Fotografen.
+ * Jede Produktion als Kontaktabzug (Filmstreifen).
+ * (WordPress: Galerien je Stück; Fotograf als Feld am Bild bzw. an der Galerie)
+ */
 import Base from '../layouts/Base.astro';
 import Bild from '../components/Bild.astro';
-import { fotos } from '../lib/data';
+import Luecke from '../components/Luecke.astro';
+import Seitenkopf from '../components/Seitenkopf.astro';
+import { fotoGruppen, platzhalter } from '../lib/data';
+
+const gruppen = fotoGruppen();
+const anzahl = gruppen.reduce((n, g) => n + g.fotos.length, 0);
 ---
-<Base titel="Fotoalbum" aktiv="fotos" footerKompakt>
-  <section class="wrap seitenkopf" aria-labelledby="fotos-titel">
-    <p class="label">Fotoalbum</p>
-    <h1 id="fotos-titel" class="auftritt">
-      <span class="seitenkopf__gross">Fotos</span>
-      <span class="seitenkopf__serif">von der Bühne.</span>
-    </h1>
-  </section>
-  <div class="wrap" style="padding-bottom:clamp(72px,8vw,120px)">
-    <ul class="fotos fotos--gross">
-      {fotos.map((f) => (
-        <li>
-          <figure class="foto">
-            <span class="foto__bild"><Bild src={f.bild} alt={`Foto aus ${f.titel}`} sizes="(max-width: 600px) 100vw, 33vw" /></span>
-            <figcaption>{f.titel}{f.jahr ? ` · ${f.jahr}` : ''}</figcaption>
-          </figure>
-        </li>
-      ))}
-    </ul>
+<Base titel="Fotos" beschreibung="Fotos von der Bühne: unser Fotoalbum, gegliedert nach Stück und Jahr." aktiv="fotos" footerKompakt>
+  <Seitenkopf label="Fotoalbum" gross="Fotos" kursiv="von der Bühne.">
+    <div class="zaehler">
+      <div class="zaehler__rahmen" aria-hidden="true"><span>{anzahl}</span></div>
+      <p class="body-2" style="max-width:15em;font-size:16px;line-height:1.45">Fotos aus {gruppen.length} Produktionen, nach Stück und Jahr sortiert.</p>
+    </div>
+  </Seitenkopf>
+
+  {gruppen.length > 1 && (
+    <nav class="wrap" aria-label="Zu einer Produktion springen">
+      <div class="filterleiste" style="justify-content:flex-start">
+        <span class="kicker">Springen zu</span>
+        <div class="springen">{gruppen.map((g) => <a href={`#${g.id}`}>{g.titel} <small>{g.jahr}</small></a>)}</div>
+      </div>
+    </nav>
+  )}
+
+  <div class="wrap album">
+    {gruppen.map((g, gi) => (
+      <section class="filmstreifen" id={g.id} aria-labelledby={`${g.id}-t`}>
+        <header class="filmstreifen__kopf">
+          <p class="filmstreifen__jahr">{g.jahr}</p>
+          <h2 id={`${g.id}-t`}>{g.titel}</h2>
+          <p class="filmstreifen__credit">
+            {g.fotografen.length
+              ? <>Fotos: {g.fotografen.join(', ')}</>
+              : platzhalter ? <>Fotos: <Luecke text="Name der Fotografin / des Fotografen" /></> : null}
+          </p>
+        </header>
+        <ul class="filmstreifen__bilder">
+          {g.fotos.map((f, i) => (
+            <li>
+              <figure class="foto filmstreifen__bild">
+                <span class="foto__bild"><Bild src={f.bild} alt={`Foto ${i + 1} aus ${g.titel} (${g.jahr})`} sizes="(max-width: 600px) 50vw, 25vw" /></span>
+                <figcaption><span class="filmstreifen__nr">{String(gi + 1).padStart(2, '0')}·{String(i + 1).padStart(2, '0')}</span>{f.fotograf && f.fotograf !== g.fotografen[0] ? ` Foto: ${f.fotograf}` : ''}</figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
   </div>
 </Base>

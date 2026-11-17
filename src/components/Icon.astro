@@ -1,6 +1,6 @@
 ---
 interface Props {
-  name: 'pfeil' | 'zurueck' | 'play' | 'download' | 'extern' | 'menu' | 'schliessen';
+  name: 'pfeil' | 'zurueck' | 'play' | 'download' | 'extern' | 'menu' | 'schliessen' | 'telefon' | 'mail' | 'ort' | 'ticket';
   size?: number;
 }
 const { name, size = 18 } = Astro.props;
@@ -15,5 +15,9 @@ const { name, size = 18 } = Astro.props;
     {name === 'extern' && <><path d="M7 17L17 7" /><path d="M9 7h8v8" /></>}
     {name === 'menu' && <><path d="M3 7h18" /><path d="M3 12h18" /><path d="M3 17h12" /></>}
     {name === 'schliessen' && <><path d="M5 5l14 14" /><path d="M19 5L5 19" /></>}
+    {name === 'telefon' && <path d="M6.5 3.5h3l1.5 4-2 1.5a11 11 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5.5a2 2 0 0 1 2-2z" stroke-linecap="round" stroke-linejoin="round" />}
+    {name === 'mail' && <><path d="M3.5 6h17v12h-17z" /><path d="M3.5 6l8.5 7 8.5-7" /></>}
+    {name === 'ort' && <><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z" stroke-linejoin="round" /><circle cx="12" cy="10" r="2.3" /></>}
+    {name === 'ticket' && <><path d="M3.5 7h17v3a2 2 0 0 0 0 4v3h-17v-3a2 2 0 0 0 0-4z" stroke-linejoin="round" /><path d="M14 7v10" stroke-dasharray="2 2.2" /></>}
   </svg>
 )}

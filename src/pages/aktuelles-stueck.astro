@@ -1,0 +1,92 @@
+---
+/**
+ * Aktuelles Stück: Handlung und Trailer · Besetzung und Team · Termine und Karten · Preise und Abendkasse
+ * (WordPress: Single-Template des aktuellen Stücks bzw. Seite „Aktuelles Stück“)
+ */
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Bild from '../components/Bild.astro';
+import Video from '../components/Video.astro';
+import StueckBuehne from '../components/StueckBuehne.astro';
+import Unternav from '../components/Unternav.astro';
+import Theaterzettel from '../components/Theaterzettel.astro';
+import Termine from '../components/Termine.astro';
+import Preise from '../components/Preise.astro';
+import { getStueckInfo, pfad } from '../lib/data';
+import { navigation } from '../lib/navigation';
+
+const info = await getStueckInfo();
+const { stueck, d, team, trailerDa, btsDa, flyerDa } = info;
+const { Content } = stueck ? await render(stueck) : { Content: null };
+const unter = navigation.find((n) => n.key === 'stueck')!.unter.map((u) => ({ ...u, href: u.href.replace('/aktuelles-stueck/', '') }));
+---
+<Base titel={d ? d.titel : 'Aktuelles Stück'} beschreibung={d?.kurztext || undefined} aktiv="stueck">
+  <StueckBuehne info={info} variante="seite" />
+
+  {d ? (
+    <>
+      <Unternav punkte={unter} label="Abschnitte zum Stück" />
+
+      <section id="handlung" class="wrap abschnitt" aria-labelledby="handlung-titel">
+        <p class="label" style="margin-bottom:32px">Handlung und Trailer</p>
+        <div class="zwei-spalten" style="align-items:start">
+          <div class="stapel">
+            {d.zitat
+              ? <h2 id="handlung-titel" class="zitat">„{d.zitat}“</h2>
+              : <h2 id="handlung-titel" class="display h-l">{d.titel}</h2>}
+            {Content && <div class="prosa"><Content /></div>}
+            <dl class="infos">
+              {d.autor && <div><dt>Autor</dt><dd>{d.autor}</dd></div>}
+              {d.regie && <div><dt>Regie</dt><dd>{d.regie}</dd></div>}
+              {d.genre && <div><dt>Genre</dt><dd>{d.genre}</dd></div>}
+            </dl>
+            {flyerDa && (
+              <a class="pfeil-link pfeil-link--linie" href={pfad(d.flyer)} download><Icon name="download" />Flyer herunterladen (PDF)</a>
+            )}
+          </div>
+          {(trailerDa || btsDa || d.bild) && (
+            <div class="stapel" style="gap:20px">
+              {trailerDa ? (
+                <Video src={d.trailer} poster={d.trailer_poster} format={d.trailer_format} titel={d.titel} kicker="Trailer" />
+              ) : d.bild ? (
+                <div class="foto__bild" style="aspect-ratio:4/3;background:none"><Bild src={d.bild} alt={`Szenenfoto aus ${d.titel}`} sizes="(max-width: 600px) 100vw, 50vw" /></div>
+              ) : null}
+              {btsDa && (
+                <div class="bts">
+                  <Video src={d.behind_the_scenes} format="hoch" klein titel="Behind the Scenes" />
+                  <div class="stapel stapel--eng" style="gap:4px">
+                    <p class="kicker rot">Hinter den Kulissen</p>
+                    <p style="font-size:17px;font-weight:600;line-height:1.35">{d.behind_the_scenes_text}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section id="besetzung" class="besetzung" aria-labelledby="besetzung-titel">
+        <div class="wrap abschnitt besetzung__inner">
+          <div class="stapel besetzung__kopf">
+            <p class="label">Besetzung und Team</p>
+            <h2 id="besetzung-titel" class="display h-l">Wer <span class="serif">spielt</span> wen?</h2>
+            <p class="body-2 pretty" style="max-width:26em">Auf der Bühne und dahinter: alle, die „{d.titel}“ möglich machen.</p>
+            {d.ensemble_bild && (
+              <figure class="besetzung__foto"><span class="foto__bild"><Bild src={d.ensemble_bild} alt={`Das Ensemble von „${d.titel}“`} sizes="(max-width: 700px) 100vw, 40vw" /></span></figure>
+            )}
+          </div>
+          <Theaterzettel titel={d.titel} besetzung={d.besetzung} team={team} />
+        </div>
+      </section>
+
+      <Termine info={info} />
+      <Preise info={info} />
+    </>
+  ) : (
+    <section class="wrap abschnitt">
+      <p class="serif" style="font-size:28px;line-height:1.2;max-width:24em">Zurzeit ist kein Stück auf dem Spielplan. Die nächste Produktion ist in Vorbereitung.</p>
+      <a class="btn btn--rot" style="margin-top:28px" href={pfad('/chronik/')}>Frühere Aufführungen<Icon name="pfeil" /></a>
+    </section>
+  )}
+</Base>

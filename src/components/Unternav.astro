@@ -1,0 +1,29 @@
+---
+/** Zweite Ebene: Sprungmarken innerhalb einer Seite, bleibt beim Scrollen oben stehen. */
+interface Props {
+  punkte: { href: string; text: string }[];
+  label: string;
+}
+const { punkte, label } = Astro.props;
+---
+<nav class="unternav" aria-label={label} data-unternav>
+  <div class="wrap unternav__inner">
+    {punkte.map((p) => <a href={p.href}>{p.text}</a>)}
+  </div>
+</nav>
+
+<script>
+  // Aktuellen Abschnitt in der Unternavigation markieren
+  document.querySelectorAll<HTMLElement>('[data-unternav]').forEach((nav) => {
+    const links = [...nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
+    const ziele = links.map((a) => document.querySelector<HTMLElement>(a.hash)).filter(Boolean) as HTMLElement[];
+    if (!('IntersectionObserver' in window) || !ziele.length) return;
+    const beob = new IntersectionObserver((eintraege) => {
+      eintraege.forEach((e) => {
+        if (!e.isIntersecting) return;
+        links.forEach((a) => (a.hash === `#${e.target.id}` ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+      });
+    }, { rootMargin: '-35% 0px -60% 0px' });
+    ziele.forEach((z) => beob.observe(z));
+  });
+</script>

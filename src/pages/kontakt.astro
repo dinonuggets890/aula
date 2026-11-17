@@ -1,0 +1,128 @@
+---
+/**
+ * Kontakt: E-Mail, Telefon · Anfahrt zum Spielort · Presse · Sponsoren
+ * (WordPress: Seite „Kontakt“; Daten aus den Website-Einstellungen bzw. einer Optionsseite)
+ */
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Bild from '../components/Bild.astro';
+import Luecke from '../components/Luecke.astro';
+import Seitenkopf from '../components/Seitenkopf.astro';
+import Unternav from '../components/Unternav.astro';
+import { dateiDa, mailto, pfad, platzhalter, site, tel } from '../lib/data';
+
+const pressemappeDa = dateiDa(site.pressemappe);
+const presseMail = site.presse_email || site.email;
+const anfahrt = [
+  { was: 'Mit Bus und Bahn', wert: site.anfahrt_oepnv, luecke: 'Haltestelle, Linien' },
+  { was: 'Mit dem Auto', wert: site.anfahrt_parken, luecke: 'Parkplätze' },
+  { was: 'Barrierefreiheit', wert: site.anfahrt_barrierefrei, luecke: 'Rollstuhlplätze, Zugang' },
+].filter((a) => a.wert || platzhalter);
+const unter = [
+  { href: '#schreiben', text: 'E-Mail und Telefon' },
+  { href: '#anfahrt', text: 'Anfahrt' },
+  { href: '#presse', text: 'Presse' },
+  { href: '#sponsoren', text: 'Sponsoren' },
+];
+---
+<Base titel="Kontakt" beschreibung={`Kontakt zur ${site.seitentitel}: E-Mail, Telefon, Anfahrt zum Spielort, Presse und Sponsoren.`} aktiv="kontakt" footerKompakt>
+  <Seitenkopf label="Kontakt" gross="Kontakt" kursiv="Wir freuen uns auf Sie." />
+  <Unternav punkte={unter} label="Abschnitte Kontakt" />
+
+  <section id="schreiben" class="wrap abschnitt" aria-label="E-Mail und Telefon">
+    <div class="kontaktkarten">
+      <a class="kontaktkarte" href={mailto}>
+        <span class="kontaktkarte__icon"><Icon name="mail" size={28} /></span>
+        <span class="kicker">E-Mail</span>
+        <b>{site.email}</b>
+        <span class="klein">Für alle Fragen rund um Verein, Stücke und Mitgliedschaft.</span>
+      </a>
+      {site.telefon ? (
+        <a class="kontaktkarte" href={tel(site.telefon)}>
+          <span class="kontaktkarte__icon"><Icon name="telefon" size={28} /></span>
+          <span class="kicker">Telefon</span>
+          <b>{site.telefon}</b>
+        </a>
+      ) : platzhalter && (
+        <div class="kontaktkarte"><span class="kontaktkarte__icon"><Icon name="telefon" size={28} /></span><span class="kicker">Telefon</span><Luecke text="Telefonnummer" /></div>
+      )}
+      {site.kartentelefon ? (
+        <a class="kontaktkarte kontaktkarte--rot" href={tel(site.kartentelefon)}>
+          <span class="kontaktkarte__icon"><Icon name="ticket" size={28} /></span>
+          <span class="kicker">Kartentelefon</span>
+          <b>{site.kartentelefon}</b>
+          {site.kartentelefon_zeiten && <span class="klein">{site.kartentelefon_zeiten}</span>}
+        </a>
+      ) : platzhalter && (
+        <div class="kontaktkarte kontaktkarte--rot"><span class="kontaktkarte__icon"><Icon name="ticket" size={28} /></span><span class="kicker">Kartentelefon</span><Luecke text="Nummer und Zeiten" /></div>
+      )}
+    </div>
+    <dl class="vorstand__liste" style="margin-top:40px">
+      {site.vorsitz.map((v) => <div><dt>{v.rolle}</dt><dd>{v.name}</dd></div>)}
+    </dl>
+  </section>
+
+  <section id="anfahrt" class="stage grain anfahrt" aria-labelledby="anfahrt-titel">
+    <div class="licht" aria-hidden="true"></div>
+    <div class="wrap abschnitt anfahrt__inner">
+      <div class="stapel">
+        <p class="label">Anfahrt zum Spielort</p>
+        <h2 id="anfahrt-titel" class="display h-l">{site.spielort_name}</h2>
+        <p class="anfahrt__adresse">{site.spielort_strasse}<br />{site.spielort_ort}</p>
+        {site.spielort_karte && (
+          <a class="btn btn--rot" style="align-self:flex-start" href={site.spielort_karte} target="_blank" rel="noopener"><Icon name="ort" />Route planen<Icon name="extern" size={16} /></a>
+        )}
+        <p class="klein" style="color:var(--s-muted)">Der Link öffnet OpenStreetMap in einem neuen Fenster.</p>
+      </div>
+      <div class="anfahrt__karte" aria-hidden="true">
+        <span class="anfahrt__nadel"><Icon name="ort" size={40} /></span>
+        <span class="anfahrt__ort">{site.spielort_kurz}</span>
+      </div>
+      {anfahrt.length > 0 && (
+        <dl class="anfahrt__wege">
+          {anfahrt.map((a) => <div><dt>{a.was}</dt><dd>{a.wert || <Luecke text={a.luecke} />}</dd></div>)}
+        </dl>
+      )}
+    </div>
+  </section>
+
+  <section id="presse" class="wrap abschnitt" aria-labelledby="presse-titel">
+    <div class="zwei-spalten" style="align-items:start">
+      <div class="stapel">
+        <p class="label">Presse</p>
+        <h2 id="presse-titel" class="display h-l">Für die <span class="serif">Presse</span></h2>
+      </div>
+      <div class="stapel">
+        <p class="prosa">{site.presse_text || 'Sie berichten über eine unserer Produktionen? Schreiben Sie uns, wir helfen gern weiter.'}</p>
+        <dl class="infos">
+          <div><dt>Ansprechpartner</dt><dd>{site.presse_kontakt || (platzhalter ? <Luecke text="Name" /> : 'Vorstand')}</dd></div>
+          <div><dt>E-Mail</dt><dd><a href={`mailto:${presseMail}?subject=${encodeURIComponent('Presseanfrage')}`}>{presseMail}</a></dd></div>
+        </dl>
+        {pressemappeDa
+          ? <a class="pfeil-link pfeil-link--linie" href={pfad(site.pressemappe)} download><Icon name="download" />Pressemappe herunterladen</a>
+          : <Luecke block text="Pressemappe (PDF) mit Texten und Pressefotos" />}
+      </div>
+    </div>
+  </section>
+
+  <section id="sponsoren" class="wrap" aria-labelledby="sponsoren-titel" style="padding-bottom:clamp(88px,9.5vw,140px)">
+    <div class="stapel" style="border-top:2px solid var(--linie-stark);padding-top:clamp(56px,5.6vw,80px);gap:32px">
+      <div class="stapel">
+        <p class="label">Sponsoren</p>
+        <h2 id="sponsoren-titel" class="display h-l">Mit freundlicher <span class="serif">Unterstützung</span></h2>
+      </div>
+      {site.sponsoren.length > 0 ? (
+        <ul class="sponsoren">
+          {site.sponsoren.map((s) => {
+            const Inhalt = s.logo ? <Bild src={s.logo} alt={s.name} sizes="200px" /> : <b>{s.name}</b>;
+            return <li>{s.url ? <a href={s.url} target="_blank" rel="noopener">{Inhalt}</a> : Inhalt}</li>;
+          })}
+        </ul>
+      ) : platzhalter ? (
+        <ul class="sponsoren">{[1, 2, 3, 4].map((n) => <li><Luecke text={`Sponsor ${n}: Logo oder Name`} /></li>)}</ul>
+      ) : (
+        <p class="body-2">Sie möchten unser Theater unterstützen? <a href={`${mailto}?subject=${encodeURIComponent('Unterstützung')}`}>Schreiben Sie uns.</a></p>
+      )}
+    </div>
+  </section>
+</Base>

@@ -44,26 +44,62 @@ Zum Testen mit anderem „Heute“-Datum (z. B. um Termine als kommend zu sehen)
 SGN_HEUTE=2026-02-10 npm run dev
 ```
 
+## Seitenstruktur
+
+Höchstens zwei Ebenen: Jeder Menüpunkt ist eine Seite, die Unterpunkte sind Abschnitte darauf (Sprungleiste unter dem Seitenkopf). Definiert in `src/lib/navigation.ts`.
+
+| Seite | Adresse | Abschnitte |
+| --- | --- | --- |
+| Startseite | `/` | Bühne mit Stück, Tickets und Trailer · Eckdaten · Termine · Programmheft in drei Akten (Ensemble, Junges Theater, Archiv) · Hinter den Kulissen und Fotos · Mitmachen |
+| Aktuelles Stück | `/aktuelles-stueck/` | Handlung und Trailer · Besetzung und Team · Termine und Karten · Preise und Abendkasse |
+| Junges Theater | `/junges-theater/` | Aktuelles Stück des JT · Team und Proben · Mitmachen · Bisher gespielt |
+| Verein | `/verein/` | Wir über uns · Mitmachen und Mitgliedschaft · Frühere Aufführungen (→ `/chronik/`) |
+| Fotos | `/fotos/` | Fotoalbum nach Stück und Jahr, mit Fotografen |
+| Kontakt | `/kontakt/` | E-Mail und Telefon · Anfahrt · Presse · Sponsoren |
+| Tickets | `/karten/` | Vorstellungen und Ticketshop |
+
+Fußzeile auf jeder Seite: Kontaktdaten, Seiten, Social Media, Impressum und Datenschutz.
+Auf dem Smartphone erscheint unten ein angehefteter Ticket-Button, sobald man an den Ticket-Buttons der Bühne vorbeigescrollt ist (nur wenn es kommende Vorstellungen gibt).
+
 ## Wo welche Inhalte liegen
 
 | Inhalt | Datei | In Pages CMS |
 | --- | --- | --- |
-| Stücke mit Terminen, Trailer, Flyer | `src/content/stuecke/*.md` | Programm › Stücke |
-| Über uns, Zahlen, Mitmachen, Junges Theater | `src/data/verein.json` | Verein › Über uns und Mitmachen |
+| Stücke: Termine mit Kartenstatus, Besetzung, Team, Preise, Abendkasse, Trailer, Probenfotos, Flyer | `src/content/stuecke/*.md` | Programm › Stücke |
+| Über uns, Zahlen, Mitmachen | `src/data/verein.json` | Verein › Über uns und Mitmachen |
+| Junges Theater: aktuelles Stück, Probenplan, Team | `src/data/junges-theater.json` | Verein › Junges Theater |
 | Chronik (alle Produktionen seit 1977) | `src/data/chronik.json` | Verein › Chronik |
-| Fotoalbum | `src/data/fotos.json` | Verein › Fotoalbum |
-| Kontakt, Spielort, Vorverkauf, Ticketshop | `src/data/einstellungen.json` | Website › Einstellungen |
+| Fotoalbum (mit Fotograf je Foto) | `src/data/fotos.json` | Verein › Fotoalbum |
+| Kontakt, Telefon, Kartentelefon, Warteliste, Spielort, Anfahrt, Presse, Sponsoren, Social Media, Ticketshop | `src/data/einstellungen.json` | Website › Einstellungen |
 | Impressum, Datenschutz | `src/content/seiten/*.md` | Website › Impressum und Datenschutz |
 | Bilder (werden automatisch verkleinert) | `src/assets/uploads/` | Medien › Bilder |
 | PDFs und Videos | `public/dateien/` | Medien › Dateien |
 
 Automatik:
 
-- Das Stück mit **„Aktuelles Stück“** steht oben auf der Startseite.
-- Vergangene Termine werden ausgeblendet. Sind alle vorbei, zeigt der Spielplan einen Hinweis. Die Seite baut sich dafür jede Nacht neu.
-- Jedes Stück mit Terminen erscheint automatisch in der Chronik.
-- Buttons für Flyer, Trailer oder Mitgliedsantrag erscheinen erst, wenn die Datei hochgeladen ist.
-- **Bühnenflächen** (Einstellungen): „Dunkel“ oder „Cremefarben“ für Startbereich und Spielplan.
+- Das Stück mit **„Aktuelles Stück“** steht auf der Startseite und auf `/aktuelles-stueck/`.
+- **Kartenstatus je Termin:** „Karten verfügbar“, „Nur noch wenige Karten“ oder „Ausverkauft“. Bei ausverkauften Terminen erscheint statt „Karten kaufen“ die Warteliste (Einstellung „Warteliste“, sonst Kartentelefon, sonst E-Mail).
+- Vergangene Termine werden ausgeblendet. Sind alle vorbei, zeigt der Terminbereich einen Hinweis. Die Seite baut sich dafür jede Nacht neu.
+- Jedes Stück mit Terminen erscheint automatisch in der Chronik. Kleine Stücke aus der Chronik erscheinen auf der Seite „Junges Theater“ unter „Bisher gespielt“.
+- Regie wird automatisch ins Team des Theaterzettels übernommen.
+- Buttons für Flyer, Trailer, Pressemappe oder Mitgliedsantrag erscheinen erst, wenn die Datei hochgeladen ist.
+- **Trailer:** „Trailer ansehen“ öffnet einen Vorhang auf der Bühne, das Video spielt direkt auf der Seite.
+- Telefonnummern sind auf dem Handy antippbar.
+- **Bühnenflächen** (Einstellungen): „Dunkel“ oder „Cremefarben“ für die Bühne oben.
+
+### Platzhalter auf Staging
+
+Auf der Staging-Seite (GitHub Pages) erscheinen fehlende Inhalte als gestrichelte Kästchen, z. B. `[Kartentelefon eintragen]`, `[Rolle] … [Name]` oder `[Trailer-Datei fehlt: …]`. So sieht man, was noch nachgetragen werden muss. Auf der Live-Seite (Strato) sind diese Kästchen nie zu sehen: Leere Bereiche werden dort ausgeblendet oder zeigen einen neutralen Text. Gesteuert über `SGN_PLATZHALTER=1` im Staging-Workflow.
+
+Lokal mit Platzhaltern ansehen:
+
+```bash
+SGN_PLATZHALTER=1 npm run dev
+```
+
+## Später WordPress
+
+Die Seite ist so gebaut, dass sie sich in ein WordPress-Theme übertragen lässt: gleiche Adressen, gleiche Inhaltsfelder, Komponenten als Template-Teile, CSS ohne Framework. Details in [`WORDPRESS.md`](WORDPRESS.md).
 
 ## Einrichtung
 
@@ -117,7 +153,8 @@ Der Staging-Workflow baut mit `SGN_NOINDEX=1`: Jede Seite bekommt `<meta name="r
 ## Technik
 
 - Astro 7, komplett statisch, kein Server-Code, keine Datenbank.
-- Schriften lokal eingebunden (Archivo, Instrument Serif), keine externen Dienste, keine Cookies.
+- Designsystem: Farben und Schriften als CSS-Variablen in `src/styles/global.css` (Logo-Rot, Weiß, Creme, Anthrazit, Steingrau, Dunkelrot; Playfair Display und Source Sans 3).
+- Schriften lokal eingebunden (Playfair Display, Source Sans 3), keine externen Dienste, keine Cookies.
 - Bilder werden beim Build als AVIF/WebP in passenden Größen erzeugt.
 - Videos werden direkt vom eigenen Server geladen (Dateien möglichst unter 50 MB halten).
 - Strukturierte Daten (schema.org `TheaterEvent`) für kommende Vorstellungen, Sitemap unter `/sitemap.xml`.

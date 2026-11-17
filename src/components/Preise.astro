@@ -1,0 +1,71 @@
+---
+/**
+ * Preise und Abendkasse: zwei Eintrittskarten (normal, ermäßigt),
+ * daneben Abendkasse, Vorverkauf und Kartentelefon.
+ * (WordPress: Felder „preis“, „preis_ermaessigt“, „ermaessigt_fuer“, „abendkasse“ am Stück)
+ */
+import Icon from './Icon.astro';
+import Luecke from './Luecke.astro';
+import { euro, pfad, platzhalter, site, tel, type StueckInfo } from '../lib/data';
+
+interface Props {
+  info: StueckInfo;
+}
+const { info } = Astro.props;
+const { d, kommend } = info;
+const shop = site.ticketshop_url;
+---
+{d && (
+  <section id="preise" class="wrap abschnitt preise" aria-labelledby="preise-titel">
+    <div class="kopfzeile">
+      <div class="stapel">
+        <p class="label">Preise und Abendkasse</p>
+        <h2 id="preise-titel" class="display h-l">Eintritt</h2>
+      </div>
+    </div>
+    <div class="preise__raster">
+      <div class="preise__karten">
+        {(d.preis || platzhalter) && (
+          <div class="preiskarte">
+            <p class="preiskarte__art">Eintritt</p>
+            <p class="preiskarte__betrag">{d.preis ? <>{euro(d.preis)}<span>€</span></> : <Luecke text="Preis" />}</p>
+            <p class="preiskarte__fuer">Erwachsene</p>
+          </div>
+        )}
+        {(d.preis_ermaessigt || platzhalter) && (
+          <div class="preiskarte preiskarte--ermaessigt">
+            <p class="preiskarte__art">Ermäßigt</p>
+            <p class="preiskarte__betrag">{d.preis_ermaessigt ? <>{euro(d.preis_ermaessigt)}<span>€</span></> : <Luecke text="Preis" />}</p>
+            <p class="preiskarte__fuer">{d.ermaessigt_fuer || (platzhalter ? <Luecke text="für wen? Schüler, Studierende …" /> : 'mit Nachweis')}</p>
+          </div>
+        )}
+        {!d.preis && !d.preis_ermaessigt && !platzhalter && (
+          <p class="serif" style="font-size:26px;line-height:1.2">{kommend.length ? 'Die Eintrittspreise geben wir mit dem Vorverkauf bekannt.' : 'Die Eintrittspreise für die nächste Produktion geben wir mit dem Vorverkauf bekannt.'}</p>
+        )}
+      </div>
+      <dl class="preise__infos">
+        <div>
+          <dt>Abendkasse</dt>
+          <dd>{d.abendkasse || (platzhalter ? <Luecke text="z. B. Öffnung 60 Minuten vor Beginn, Restkarten" /> : 'Bei freien Plätzen gibt es Karten auch an der Abendkasse.')}</dd>
+        </div>
+        {site.vorverkauf_stellen && <div><dt>Vorverkauf</dt><dd>{site.vorverkauf_stellen}</dd></div>}
+        {site.kartentelefon ? (
+          <div>
+            <dt>Kartentelefon</dt>
+            <dd><a class="tel-link" href={tel(site.kartentelefon)}><Icon name="telefon" size={18} />{site.kartentelefon}</a>{site.kartentelefon_zeiten && <span class="klein" style="display:block">{site.kartentelefon_zeiten}</span>}</dd>
+          </div>
+        ) : platzhalter ? (
+          <div><dt>Kartentelefon</dt><dd><Luecke text="Telefonnummer und Zeiten" /></dd></div>
+        ) : null}
+        <div>
+          <dt>Online</dt>
+          <dd>
+            {shop
+              ? <a class="pfeil-link" href={shop} target="_blank" rel="noopener">Zum Ticketshop<Icon name="extern" size={16} /></a>
+              : <a class="pfeil-link" href={pfad('/karten/')}>{kommend.length ? 'Karten online' : 'Zur Kartenseite'}<Icon name="pfeil" size={16} /></a>}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+)}

@@ -6,13 +6,13 @@
   RewriteCond %{HTTPS} !=on
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
   # Alte WordPress-Adressen auf die neuen Seiten umleiten
-  RewriteRule ^aktuelles-stueck/?$ /#stueck [R=301,L,NE]
   RewriteRule ^eintrittskarten/?$ /karten/ [R=301,L]
   RewriteRule ^auffuehrungen(/.*)?$ /chronik/ [R=301,L]
   RewriteRule ^fotoalbum(/.*)?$ /fotos/ [R=301,L]
-  RewriteRule ^verein/mitgliedschaft/?$ /#mitmachen [R=301,L,NE]
-  RewriteRule ^verein/junges-theater-in-der-sgn(/.*)?$ /#mitmachen [R=301,L,NE]
-  RewriteRule ^verein(/wir-ueber-uns)?/?$ /#verein [R=301,L,NE]
+  # (/aktuelles-stueck/ und /verein/ gibt es wieder als echte Seiten, daher keine Umleitung dorthin)
+  RewriteRule ^verein/mitgliedschaft/?$ /verein/#mitmachen [R=301,L,NE]
+  RewriteRule ^verein/junges-theater-in-der-sgn(/.*)?$ /junges-theater/ [R=301,L]
+  RewriteRule ^verein/wir-ueber-uns/?$ /verein/ [R=301,L]
   RewriteRule ^(feed|comments/feed|category/.*|author/.*|20[0-9][0-9]/.*|wir-freuen-uns-.*)/?$ / [R=301,L]
 </IfModule>
 

@@ -1,0 +1,43 @@
+---
+/**
+ * Besetzung und Team als klassischer Theaterzettel:
+ * Rolle ……… Name, mit gepunkteten Führungslinien.
+ * (WordPress: Repeater „besetzung“ und „team“ am Stück)
+ */
+import Luecke from './Luecke.astro';
+import { platzhalter } from '../lib/data';
+
+interface Props {
+  titel: string;
+  besetzung: { rolle: string; name: string }[];
+  team: { aufgabe: string; name: string }[];
+}
+const { titel, besetzung, team } = Astro.props;
+const beispiel = Array.from({ length: 4 });
+---
+<div class="zettel">
+  <p class="zettel__titel">„{titel}“</p>
+  <div class="zettel__block">
+    <h3 class="zettel__kopf">Es spielen</h3>
+    {besetzung.length > 0 ? (
+      <dl class="zettel__liste">
+        {besetzung.map((p) => <div><dt>{p.rolle || ' '}</dt><dd>{p.name}</dd></div>)}
+      </dl>
+    ) : platzhalter ? (
+      <dl class="zettel__liste">
+        {beispiel.map(() => <div><dt><Luecke text="Rolle" /></dt><dd><Luecke text="Name" /></dd></div>)}
+      </dl>
+    ) : (
+      <p class="zettel__leer">Die Besetzung wird bald bekannt gegeben.</p>
+    )}
+  </div>
+  {(team.length > 0 || platzhalter) && (
+    <div class="zettel__block">
+      <h3 class="zettel__kopf">Hinter der Bühne</h3>
+      <dl class="zettel__liste">
+        {team.map((p) => <div><dt>{p.aufgabe}</dt><dd>{p.name}</dd></div>)}
+        {platzhalter && team.length < 2 && <div><dt><Luecke text="Technik, Maske, Kostüm, Souffleuse …" /></dt><dd><Luecke text="Name" /></dd></div>}
+      </dl>
+    </div>
+  )}
+</div>

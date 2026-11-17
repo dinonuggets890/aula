@@ -6,8 +6,53 @@ import einstellungen from '../data/einstellungen.json';
 import verein from '../data/verein.json';
 import chronikRaw from '../data/chronik.json';
 import fotosRaw from '../data/fotos.json';
+import jtRaw from '../data/junges-theater.json';
 
-export const site = einstellungen;
+/* ---------- Einstellungen (Pages CMS: Website › Einstellungen) ---------- */
+export interface Verweis { name: string; url: string; logo?: string }
+type Einstellungen = typeof einstellungen & {
+  telefon: string;
+  kartentelefon: string;
+  kartentelefon_zeiten: string;
+  warteliste: string;
+  anfahrt_oepnv: string;
+  anfahrt_parken: string;
+  anfahrt_barrierefrei: string;
+  presse_text: string;
+  presse_kontakt: string;
+  presse_email: string;
+  pressemappe: string;
+  sponsoren: Verweis[];
+  social: Verweis[];
+};
+const leer = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
+const verweise = (v: unknown): Verweis[] =>
+  (Array.isArray(v) ? v : [])
+    .map((x: any) => ({ name: leer(x?.name), url: leer(x?.url), logo: leer(x?.logo) }))
+    .filter((x) => x.name || x.url);
+export const site: Einstellungen = {
+  ...einstellungen,
+  telefon: leer((einstellungen as any).telefon),
+  kartentelefon: leer((einstellungen as any).kartentelefon),
+  kartentelefon_zeiten: leer((einstellungen as any).kartentelefon_zeiten),
+  warteliste: leer((einstellungen as any).warteliste),
+  anfahrt_oepnv: leer((einstellungen as any).anfahrt_oepnv),
+  anfahrt_parken: leer((einstellungen as any).anfahrt_parken),
+  anfahrt_barrierefrei: leer((einstellungen as any).anfahrt_barrierefrei),
+  presse_text: leer((einstellungen as any).presse_text),
+  presse_kontakt: leer((einstellungen as any).presse_kontakt),
+  presse_email: leer((einstellungen as any).presse_email),
+  pressemappe: leer((einstellungen as any).pressemappe),
+  sponsoren: verweise((einstellungen as any).sponsoren),
+  social: verweise((einstellungen as any).social),
+};
+
+/**
+ * Staging: SGN_PLATZHALTER=1 zeigt leere Inhalte als markierte Lücken
+ * („[Besetzung eintragen]“), damit man sieht, was noch fehlt.
+ * Auf der Live-Seite fehlt der Schalter: leere Bereiche werden ausgeblendet.
+ */
+export const platzhalter = process.env.SGN_PLATZHALTER === '1';
 
 /** Prototyp: SGN_NOINDEX=1 sperrt die Seite für Suchmaschinen (gesetzt im GitHub-Pages-Workflow). */
 export const noindex = process.env.SGN_NOINDEX === '1';
@@ -43,10 +88,18 @@ export const fmt = {
 
 export type Stueck = CollectionEntry<'stuecke'>;
 
+export type Kartenstatus = 'verfuegbar' | 'wenige' | 'ausverkauft';
+export const statusText: Record<Kartenstatus, string> = {
+  verfuegbar: 'Karten verfügbar',
+  wenige: 'Nur noch wenige Karten',
+  ausverkauft: 'Ausverkauft',
+};
+
 export interface Termin {
   datum: string;
   uhrzeit: string;
   premiere: boolean;
+  status: Kartenstatus;
   ausverkauft: boolean;
   vorbei: boolean;
   monat: string;
@@ -65,16 +118,47 @@ export function termineVon(stueck: Stueck): Termin[] {
   return [...stueck.data.termine]
     .filter((t) => /^\d{4}-\d{2}-\d{2}$/.test(t.datum))
     .sort((a, b) => `${a.datum}${a.uhrzeit}`.localeCompare(`${b.datum}${b.uhrzeit}`))
-    .map((t) => ({
+    .map((t) => {
+      const status: Kartenstatus = t.status ?? (t.ausverkauft ? 'ausverkauft' : 'verfuegbar');
+      return {
       datum: t.datum,
       uhrzeit: t.uhrzeit || '19:30',
       premiere: t.premiere,
-      ausverkauft: t.ausverkauft,
+      status,
+      ausverkauft: status === 'ausverkauft',
       vorbei: t.datum < heute,
       monat: fmt.monat(t.datum),
       ...ticketLink(t, stueck),
-    }));
+      };
+    });
 }
+
+/** Warteliste bei ausverkauften Terminen: eigener Hinweis > Kartentelefon > E-Mail */
+export function wartelisteLink(): { href: string; text: string } {
+  if (site.warteliste) {
+    if (/^https?:|^mailto:|^tel:/.test(site.warteliste)) return { href: site.warteliste, text: 'Warteliste' };
+    if (/@/.test(site.warteliste)) return { href: `mailto:${site.warteliste}`, text: 'Warteliste' };
+    if (/^[+\d][\d\s/()-]{5,}$/.test(site.warteliste)) return { href: tel(site.warteliste), text: 'Warteliste' };
+  }
+  if (site.kartentelefon) return { href: tel(site.kartentelefon), text: 'Warteliste' };
+  return { href: `mailto:${site.email}?subject=${encodeURIComponent('Warteliste')}`, text: 'Warteliste' };
+}
+
+/** „0821 123 45 67“ -> „tel:+498211234567“ (deutsche Nummern ohne Ländervorwahl) */
+export function tel(nummer: string): string {
+  const roh = nummer.replace(/[^\d+]/g, '');
+  if (roh.startsWith('+')) return `tel:${roh}`;
+  if (roh.startsWith('00')) return `tel:+${roh.slice(2)}`;
+  if (roh.startsWith('0')) return `tel:+49${roh.slice(1)}`;
+  return `tel:${roh}`;
+}
+
+/** Preise eines Stücks als Text: „12 € · ermäßigt 8 €“ */
+export function preisText(d: { preis: string; preis_ermaessigt: string }): string {
+  const euro = (p: string) => (/€|eur/i.test(p) ? p : `${p} €`);
+  return [d.preis && euro(d.preis), d.preis_ermaessigt && `ermäßigt ${euro(d.preis_ermaessigt)}`].filter(Boolean).join(' · ');
+}
+export const euro = (p: string) => (!p ? '' : /€|eur/i.test(p) ? p.replace(/\s*€\s*/, '') : p);
 
 export async function getAktuellesStueck(): Promise<Stueck | null> {
   const alle = await getCollection('stuecke');
@@ -123,8 +207,45 @@ export interface Foto {
   bild: string;
   titel: string;
   jahr: number | string;
+  fotograf: string;
 }
-export const fotos: Foto[] = (fotosRaw as any[]).filter((f) => f?.bild);
+export const fotos: Foto[] = (fotosRaw as any[])
+  .filter((f) => f?.bild)
+  .map((f) => ({ bild: f.bild, titel: leer(f.titel) || 'Ohne Titel', jahr: f.jahr ?? '', fotograf: leer(f.fotograf) }));
+
+/** Fotoalbum gegliedert nach Stück und Jahr (neueste zuerst), mit Fotografen. */
+export interface FotoGruppe { id: string; titel: string; jahr: number | string; fotos: Foto[]; fotografen: string[] }
+export function fotoGruppen(): FotoGruppe[] {
+  const gruppen: FotoGruppe[] = [];
+  for (const f of fotos) {
+    const id = `${f.jahr}-${f.titel}`.toLowerCase().normalize('NFKD').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '');
+    let g = gruppen.find((x) => x.id === id);
+    if (!g) { g = { id, titel: f.titel, jahr: f.jahr, fotos: [], fotografen: [] }; gruppen.push(g); }
+    g.fotos.push(f);
+    if (f.fotograf && !g.fotografen.includes(f.fotograf)) g.fotografen.push(f.fotograf);
+  }
+  return gruppen.sort((a, b) => Number(b.jahr) - Number(a.jahr) || a.titel.localeCompare(b.titel, 'de'));
+}
+
+/* ---------- Junges Theater (Pages CMS: Verein › Junges Theater) ---------- */
+const jtText = (k: string) => leer((jtRaw as any)[k]);
+export const jt = {
+  titel: jtText('titel'),
+  titel_kursiv: jtText('titel_kursiv'),
+  intro: jtText('intro'),
+  aktuell_titel: jtText('aktuell_titel'),
+  aktuell_text: jtText('aktuell_text'),
+  aktuell_termine: jtText('aktuell_termine'),
+  aktuell_bild: jtText('aktuell_bild'),
+  altersgruppe: jtText('altersgruppe'),
+  probenzeit: jtText('probenzeit'),
+  probenort: jtText('probenort'),
+  team: (Array.isArray((jtRaw as any).team) ? (jtRaw as any).team : [])
+    .map((t: any) => ({ aufgabe: leer(t?.aufgabe), name: leer(t?.name) }))
+    .filter((t: { aufgabe: string; name: string }) => t.aufgabe || t.name) as { aufgabe: string; name: string }[],
+  mitmachen_text: jtText('mitmachen_text'),
+  kontakt: jtText('kontakt'),
+};
 
 /** Bilder aus dem CMS liegen in src/assets/uploads und werden von Astro optimiert. */
 const bilder = import.meta.glob<{ default: ImageMetadata }>(
@@ -169,3 +290,36 @@ export function pfad(url: string): string {
   if (base && (url === base || url.startsWith(`${base}/`))) return url;
   return `${base}${url}`;
 }
+
+/** Alles, was mehrere Seiten über das aktuelle Stück wissen müssen (Bühne, Eckdaten, Ticketleiste). */
+export async function getStueckInfo() {
+  const heute = heuteISO();
+  const stueck = await getAktuellesStueck();
+  const d = stueck?.data ?? null;
+  const termine = stueck ? termineVon(stueck) : [];
+  const kommend = termine.filter((t) => !t.vorbei);
+  const erste = termine[0];
+  const letzte = termine.at(-1);
+  const premiere = termine.find((t) => t.premiere) ?? erste;
+  const naechste = kommend[0];
+  const spielzeit = erste && letzte
+    ? erste.datum === letzte.datum ? fmt.mittel(erste.datum) : `${fmt.tagMonat(erste.datum)} bis ${fmt.mittel(letzte.datum)}`
+    : '';
+  let hinweis = '';
+  if (premiere && premiere.datum >= heute) hinweis = `Premiere am ${fmt.mittel(premiere.datum)}`;
+  else if (naechste) hinweis = `Nächste Vorstellung am ${fmt.mittel(naechste.datum)}`;
+  else if (letzte) hinweis = `Gespielt bis ${fmt.mittel(letzte.datum)}`;
+  // Regie gehört immer ins Team, auch wenn sie dort nicht extra eingetragen ist
+  const team = d
+    ? [...(d.regie && !d.team.some((t) => /^regie$/i.test(t.aufgabe)) ? [{ aufgabe: 'Regie', name: d.regie }] : []), ...d.team]
+    : [];
+  return {
+    heute, stueck, d, termine, kommend, erste, letzte, premiere, naechste, spielzeit, hinweis, team,
+    preise: d ? preisText(d) : '',
+    trailerDa: !!d && dateiDa(d.trailer),
+    btsDa: !!d && dateiDa(d.behind_the_scenes),
+    flyerDa: !!d && dateiDa(d.flyer),
+    vorverkaufKommt: !!site.vorverkauf_ab && site.vorverkauf_ab > heute,
+  };
+}
+export type StueckInfo = Awaited<ReturnType<typeof getStueckInfo>>;

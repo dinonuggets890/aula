@@ -52,6 +52,9 @@ jobs:
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
           # Staging: nicht bei Google & Co. auftauchen.
           SGN_NOINDEX: '1'
+          # Staging: fehlende Inhalte als markierte Lücken zeigen („[Besetzung eintragen]“).
+          # Die Live-Seite (strato.yml) setzt das nicht, dort werden leere Bereiche ausgeblendet.
+          SGN_PLATZHALTER: '1'
 
       - uses: actions/upload-pages-artifact@v3
         with:

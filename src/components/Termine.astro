@@ -1,0 +1,80 @@
+---
+/**
+ * Termine und Karten: alle Vorstellungen als Eintrittskarten, je mit Kauf-Button
+ * und Kartenstatus. Darunter Vorverkauf, Preise, Kartentelefon.
+ * (WordPress: Block-Pattern „termine“, Daten aus dem Repeater „termine“ des Stücks)
+ */
+import TicketKarte from './TicketKarte.astro';
+import Icon from './Icon.astro';
+import { fmt, pfad, site, tel, type StueckInfo } from '../lib/data';
+
+interface Props {
+  info: StueckInfo;
+  /** Überschriften-Ebene (Standard h2) */
+  ebene?: 'h2' | 'h3';
+}
+const { info, ebene = 'h2' } = Astro.props;
+const { d, termine, kommend, preise, vorverkaufKommt } = info;
+const monate = [...new Set(kommend.map((t) => t.monat))];
+const Ueberschrift = ebene;
+const titel = kommend.length && d?.spielplan_titel ? d.spielplan_titel.split(/(?<=\.)\s+/) : ['Termine und Karten'];
+---
+{d && termine.length > 0 && (
+  <section id="termine" class="stage spielplan spielplan--hell" aria-labelledby="termine-titel">
+    <div class="wrap spielplan__inner">
+      <div class="kopfzeile">
+        <div class="stapel">
+          <p class="label">Termine und Karten</p>
+          <Ueberschrift id="termine-titel" class="display h-l">
+            {titel.map((satz, i) => <>{i > 0 && <br />}{satz}</>)}
+          </Ueberschrift>
+          {kommend.length > 0 && (
+            <p class="spielplan__intro">Alle Vorstellungen auf einen Blick. Karten gibt es online{site.kartentelefon ? ' oder telefonisch' : ''}{site.vorverkauf_stellen ? ' und im Vorverkauf' : ''}, bei freien Plätzen auch an der Abendkasse.</p>
+          )}
+        </div>
+        {monate.length > 1 && (
+          <div class="chips" role="group" aria-label="Termine nach Monat filtern" data-monatsfilter>
+            <button class="chip" type="button" aria-pressed="true" data-monat="">Alle Termine</button>
+            {monate.map((m) => <button class="chip" type="button" aria-pressed="false" data-monat={m}>{m}</button>)}
+          </div>
+        )}
+      </div>
+
+      {kommend.length === 0 && (
+        <div class="hinweis-box">
+          <p class="serif">Die Vorstellungen von „{d.titel}“ sind vorbei.</p>
+          <p style="color:var(--s-text)">Vielen Dank an alle Zuschauerinnen und Zuschauer. Neue Termine folgen.</p>
+        </div>
+      )}
+
+      <ul class="karten-raster" data-termine>
+        {(kommend.length ? kommend : termine).map((t) => <TicketKarte termin={t} />)}
+      </ul>
+
+      {kommend.length > 0 && (
+        <div class="infozeile">
+          {vorverkaufKommt && <div><p class="kicker">Vorverkauf</p><p>ab {fmt.mittel(site.vorverkauf_ab)}</p></div>}
+          {site.vorverkauf_stellen && <div><p class="kicker">Erhältlich</p><p>{site.vorverkauf_stellen}</p></div>}
+          {preise && <div><p class="kicker">Eintritt</p><p>{preise}</p></div>}
+          {site.kartentelefon && (
+            <div><p class="kicker">Kartentelefon</p><p><a class="tel-link" href={tel(site.kartentelefon)}><Icon name="telefon" size={18} />{site.kartentelefon}</a></p></div>
+          )}
+          <div><p class="kicker">Abendkasse</p><p><a class="pfeil-link" href={pfad('/aktuelles-stueck/#preise')}>Preise und Abendkasse<Icon name="pfeil" size={16} /></a></p></div>
+        </div>
+      )}
+    </div>
+  </section>
+)}
+
+<script>
+  document.querySelectorAll('[data-monatsfilter]').forEach((filter) => {
+    const karten = filter.closest('section')?.querySelectorAll<HTMLElement>('[data-termine] > li') ?? [];
+    filter.querySelectorAll<HTMLButtonElement>('button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const monat = btn.dataset.monat;
+        filter.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        karten.forEach((k) => { k.hidden = !!monat && k.dataset.monat !== monat; });
+      });
+    });
+  });
+</script>

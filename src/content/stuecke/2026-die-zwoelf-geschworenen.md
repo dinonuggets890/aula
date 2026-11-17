@@ -23,43 +23,43 @@ termine:
   - datum: 2026-03-20
     uhrzeit: 19:30
     premiere: true
-    ausverkauft: false
+    status: verfuegbar
   - datum: 2026-03-21
     uhrzeit: 19:30
     premiere: false
-    ausverkauft: false
+    status: verfuegbar
   - datum: 2026-03-22
     uhrzeit: 17:00
     premiere: false
-    ausverkauft: false
+    status: verfuegbar
   - datum: 2026-04-18
     uhrzeit: 19:30
     premiere: false
-    ausverkauft: false
+    status: verfuegbar
   - datum: 2026-04-19
     uhrzeit: 17:00
     premiere: false
-    ausverkauft: false
+    status: verfuegbar
   - datum: 2026-04-25
     uhrzeit: 19:30
     premiere: false
-    ausverkauft: false
+    status: verfuegbar
   - datum: 2026-04-26
     uhrzeit: 17:00
     premiere: false
-    ausverkauft: false
+    status: verfuegbar
   - datum: 2026-05-01
     uhrzeit: 19:30
     premiere: false
-    ausverkauft: false
+    status: verfuegbar
   - datum: 2026-05-02
     uhrzeit: 19:30
     premiere: false
-    ausverkauft: false
+    status: verfuegbar
   - datum: 2026-05-03
     uhrzeit: 17:00
     premiere: false
-    ausverkauft: false
+    status: verfuegbar
 ---
 Wir laden Sie herzlich ein zu unserem neuen Theaterstück: ein spannendes Gerichtsdrama und Kammerspiel über Vorurteile, Gerechtigkeit und die Verantwortung des Einzelnen.
 

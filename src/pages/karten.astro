@@ -1,23 +1,22 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { site, fmt, getAktuellesStueck, termineVon, pfad } from '../lib/data';
+import { site, fmt, getStueckInfo, pfad, statusText, tel, wartelisteLink } from '../lib/data';
 
-const stueck = await getAktuellesStueck();
-const d = stueck?.data;
-const kommend = stueck ? termineVon(stueck).filter((t) => !t.vorbei) : [];
+const { d, kommend, preise } = await getStueckInfo();
+const warteliste = wartelisteLink();
 const shopUrl = site.ticketshop_url;
 const einbetten = !!shopUrl && site.ticketshop_einbetten;
 ---
-<Base titel="Karten" beschreibung={d ? `Karten für ${d.titel}` : 'Karten'} aktiv="karten" footerKompakt>
+<Base titel="Tickets" beschreibung={d ? `Tickets für ${d.titel}` : 'Tickets'} aktiv="karten" footerKompakt ticketleiste={false}>
   <div class="wrap" style="padding-top:16px">
-    <a class="pfeil-link" href={pfad('/#spielplan')} style="color:var(--text);font-weight:600;font-size:15px"><Icon name="zurueck" size={16} />Zurück zum Spielplan</a>
+    <a class="pfeil-link" href={pfad('/aktuelles-stueck/#termine')} style="color:var(--text);font-weight:600;font-size:15px"><Icon name="zurueck" size={16} />Alle Termine und Infos zum Stück</a>
   </div>
   <div class="wrap karten-layout" style="padding-top:24px">
     <section class="stage grain" aria-labelledby="karten-titel">
       <div class="licht" aria-hidden="true"></div>
       <div class="stapel stapel--eng">
-        <p class="label">Karten</p>
+        <p class="label">Tickets</p>
         <h1 id="karten-titel" class="display" style="font-size:clamp(40px,4.6vw,68px);line-height:1.08">{d ? d.titel : 'Karten'}</h1>
         {d?.autor && <p class="serif" style="font-size:26px;line-height:1.15">von {d.autor}</p>}
         <p class="klein" style="color:var(--s-muted)">{site.spielort_name}, {site.spielort_strasse}, {site.spielort_ort}</p>
@@ -30,10 +29,10 @@ const einbetten = !!shopUrl && site.ticketshop_einbetten;
               <li>
                 <span>
                   <b>{fmt.wochentagKurz(t.datum)}, {fmt.tag(t.datum)}.{t.datum.slice(5, 7)}.</b>
-                  <span class="klein" style="display:block">{t.uhrzeit} Uhr{t.premiere ? ' · Premiere' : ''}</span>
+                  <span class="klein" style="display:block">{t.uhrzeit} Uhr{t.premiere ? ' · Premiere' : ''} · <span class:list={['termin-status', `termin-status--${t.status}`]}>{statusText[t.status]}</span></span>
                 </span>
-                {t.ausverkauft ? (
-                  <span class="klein">Ausverkauft</span>
+                {t.status === 'ausverkauft' ? (
+                  <a class="btn btn--ghost btn--klein" href={warteliste.href}>Warteliste</a>
                 ) : t.extern ? (
                   <a class="btn btn--rot btn--klein" href={t.href} target="_blank" rel="noopener">Karten<Icon name="extern" size={16} /></a>
                 ) : einbetten ? (
@@ -56,7 +55,8 @@ const einbetten = !!shopUrl && site.ticketshop_einbetten;
           <p class="kicker">Online-Kartenverkauf</p>
           <p class="pretty" style="font-size:19px;max-width:32em">{site.ticketshop_hinweis}</p>
           {shopUrl && <a class="btn btn--rot" href={shopUrl} target="_blank" rel="noopener" style="align-self:flex-start">Zum Ticketshop<Icon name="extern" /></a>}
-          {site.preise && <p class="klein">Eintritt: {site.preise}</p>}
+          {preise && <p class="klein">Eintritt: {preise}</p>}
+          {site.kartentelefon && <p><a class="tel-link" href={tel(site.kartentelefon)}><Icon name="telefon" size={18} />Kartentelefon {site.kartentelefon}</a>{site.kartentelefon_zeiten && <span class="klein"> · {site.kartentelefon_zeiten}</span>}</p>}
         </div>
       )}
     </section>
