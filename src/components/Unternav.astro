@@ -13,17 +13,38 @@ const { punkte, label } = Astro.props;
 </nav>
 
 <script>
-  // Aktuellen Abschnitt in der Unternavigation markieren
+  // Aktuellen Abschnitt markieren; eine Pille gleitet unter den aktiven Punkt
   document.querySelectorAll<HTMLElement>('[data-unternav]').forEach((nav) => {
+    const inner = nav.querySelector<HTMLElement>('.unternav__inner');
     const links = [...nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
     const ziele = links.map((a) => document.querySelector<HTMLElement>(a.hash)).filter(Boolean) as HTMLElement[];
-    if (!('IntersectionObserver' in window) || !ziele.length) return;
+    if (!inner || !('IntersectionObserver' in window) || !ziele.length) return;
+
+    const pille = document.createElement('span');
+    pille.className = 'unternav__pille';
+    pille.setAttribute('aria-hidden', 'true');
+    inner.prepend(pille);
+    nav.classList.add('hat-pille');
+
+    const setze = (aktiv: HTMLAnchorElement | undefined) => {
+      links.forEach((a) => (a === aktiv ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+      if (!aktiv) { pille.classList.remove('da'); return; }
+      pille.style.translate = `${aktiv.offsetLeft}px 0`;
+      pille.style.width = `${aktiv.offsetWidth}px`;
+      pille.classList.add('da');
+      // Auf schmalen Bildschirmen den aktiven Punkt in die sichtbare Leiste holen
+      const rand = 24;
+      if (aktiv.offsetLeft < inner.scrollLeft + rand || aktiv.offsetLeft + aktiv.offsetWidth > inner.scrollLeft + inner.clientWidth - rand) {
+        inner.scrollTo({ left: aktiv.offsetLeft - rand, behavior: document.documentElement.classList.contains('ruhig') ? 'auto' : 'smooth' });
+      }
+    };
+
     const beob = new IntersectionObserver((eintraege) => {
       eintraege.forEach((e) => {
-        if (!e.isIntersecting) return;
-        links.forEach((a) => (a.hash === `#${e.target.id}` ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+        if (e.isIntersecting) setze(links.find((a) => a.hash === `#${e.target.id}`));
       });
     }, { rootMargin: '-35% 0px -60% 0px' });
     ziele.forEach((z) => beob.observe(z));
+    window.addEventListener('resize', () => setze(links.find((a) => a.hasAttribute('aria-current'))), { passive: true });
   });
 </script>

@@ -120,15 +120,20 @@ h1, h2, h3, p, dl, dd, figure, ol, ul { margin: 0; }
   min-height: 54px; padding: 0 26px;
   font: inherit; font-size: 16px; font-weight: 700; letter-spacing: 0.02em;
   text-decoration: none; border: 1.5px solid transparent; cursor: pointer;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  /* Beim Darüberfahren läuft die Füllfarbe (--fuell) von links ein */
+  background-image: linear-gradient(var(--fuell, transparent), var(--fuell, transparent));
+  background-repeat: no-repeat; background-position: 0 0; background-size: 0% 100%;
+  transition: background-size 0.45s cubic-bezier(0.2, 0.7, 0.1, 1), color 0.25s, border-color 0.25s, translate 0.25s, scale 0.15s, box-shadow 0.25s;
 }
+.btn:hover { background-size: 100% 100%; }
+.btn:active { scale: 0.97; }
 .btn svg { flex: none; }
-.btn--rot { background: var(--rot); color: #fff; }
-.btn--rot:hover { background: var(--rot-dunkel); color: #fff; }
-.btn--ghost { border-color: var(--s-ghost, rgba(43, 35, 32, 0.45)); color: inherit; background: transparent; }
-.btn--ghost:hover { background: var(--s-fg, var(--tinte)); color: var(--s-bg, #fff); }
-.btn--papier { background: var(--creme-hell); color: var(--rot); }
-.btn--papier:hover { background: var(--tinte); color: #fff; }
+.btn--rot { --fuell: var(--rot-dunkel); background-color: var(--rot); color: #fff; }
+.btn--rot:hover { color: #fff; }
+.btn--ghost { --fuell: var(--s-fg, var(--tinte)); border-color: var(--s-ghost, rgba(43, 35, 32, 0.45)); color: inherit; background-color: transparent; }
+.btn--ghost:hover { color: var(--s-bg, #fff); border-color: var(--fuell); }
+.btn--papier { --fuell: var(--tinte); background-color: var(--creme-hell); color: var(--rot); }
+.btn--papier:hover { color: #fff; }
 .btn--klein { min-height: 46px; padding: 0 20px; font-size: 15px; }
 
 .pfeil-link {
@@ -152,7 +157,7 @@ h1, h2, h3, p, dl, dd, figure, ol, ul { margin: 0; }
   background: linear-gradient(var(--rot), var(--rot)) 0 100% / 0 2px no-repeat; transition: background-size 0.35s cubic-bezier(0.2, 0.7, 0.1, 1), color 0.2s;
 }
 .kopf__nav a:not(.btn):hover, .kopf__nav a:not(.btn)[aria-current='page'] { color: var(--rot); background-size: 100% 2px; }
-.kopf__nav .btn[aria-current='page'] { background: var(--tinte); }
+.kopf__nav .btn[aria-current='page'] { background-color: var(--tinte); --fuell: var(--rot); }
 .kopf__mobil { display: none; align-items: center; gap: 6px; }
 .menu-btn { width: 48px; height: 48px; border: 0; background: transparent; color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
@@ -197,7 +202,12 @@ html[data-buehne='hell'] .licht { background: radial-gradient(ellipse 55% 70% at
 
 /* ---------- Hero ---------- */
 .hero-rahmen { padding-inline: clamp(8px, 1.1vw, 16px); }
-.hero { padding: clamp(24px, 4.4vw, 64px); display: flex; flex-direction: column; gap: clamp(28px, 2.8vw, 40px); }
+.hero {
+  padding: clamp(24px, 4.4vw, 64px);
+  /* Ab 1440 px: Inhalt fluchtet mit Logo und Abschnitten (.wrap), die Bühne selbst bleibt randlos */
+  padding-inline: max(clamp(24px, 4.4vw, 64px), calc((100vw - var(--max)) / 2 + var(--rand) - clamp(8px, 1.1vw, 16px)));
+  display: flex; flex-direction: column; gap: clamp(28px, 2.8vw, 40px);
+}
 .hero__oben { display: flex; justify-content: space-between; align-items: center; gap: 12px 24px; flex-wrap: wrap; font-size: 13px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
 .hero__oben p:last-child { color: var(--s-muted); }
 .hero__titel { display: flex; flex-direction: column; font-weight: 400; }
@@ -237,14 +247,26 @@ html[data-buehne='hell'] .licht { background: radial-gradient(ellipse 55% 70% at
 @keyframes rahmen-auf { from { opacity: 0; transform: rotate(-24deg) scale(0.8); } to { opacity: 1; transform: rotate(var(--kipp)) scale(1); } }
 
 /* ---------- Laufband ---------- */
-.laufband-huelle { overflow-x: clip; overflow-y: visible; }
-.laufband { position: relative; z-index: 2; width: 106%; margin: -26px -3% 0; transform: rotate(-1.6deg); background: var(--rot); color: #fff; overflow: hidden; padding: 16px 0 14px; }
+/* Das Band hat keine eigene Höhe im Seitenfluss: Es liegt mittig genau auf der Kante
+   zwischen Bühne und nächstem Abschnitt und verdeckt sie über die ganze Breite.
+   Damit das auch auf sehr breiten Bildschirmen gilt, wird der Kippwinkel mit der Breite
+   kleiner: Höhenversatz der Enden = Breite × tan(Winkel) bleibt unter ca. 45 px (Band ca. 61 px hoch). */
+.laufband-huelle { position: relative; z-index: 3; height: 0; overflow-x: clip; overflow-y: visible; }
+.laufband {
+  --band-winkel: -1.6deg;
+  position: absolute; left: -3%; top: 0; width: 106%; translate: 0 -50%; transform: rotate(var(--band-winkel));
+  background: var(--rot); color: #fff; overflow: hidden; padding: 16px 0 14px;
+}
+@media (min-width: 1601px) { .laufband { --band-winkel: -1.15deg; } }
+@media (min-width: 2201px) { .laufband { --band-winkel: -0.85deg; } }
+@media (min-width: 3001px) { .laufband { --band-winkel: -0.62deg; } }
+@media (min-width: 4001px) { .laufband { --band-winkel: -0.45deg; } }
 .laufband__spur { display: flex; width: max-content; animation: laufband 46s linear infinite; }
 .laufband__gruppe { display: flex; align-items: center; gap: 36px; padding-right: 36px; font-family: var(--f-display); font-weight: 700; font-size: 28px; line-height: 1.1; letter-spacing: 0; white-space: nowrap; }
 .laufband__gruppe i { width: 14px; height: 14px; border: 3px solid #fff; transform: rotate(var(--kipp)); }
 @keyframes laufband { to { transform: translateX(-50%); } }
 @media (max-width: 600px) {
-  .laufband { width: 110%; margin: -16px -5% 0; transform: rotate(-2deg); padding: 11px 0 9px; }
+  .laufband { --band-winkel: -2deg; left: -5%; width: 110%; padding: 11px 0 9px; }
   .laufband__gruppe { font-size: 20px; gap: 22px; padding-right: 22px; }
   .laufband__gruppe i { width: 11px; height: 11px; border-width: 2.5px; }
 }
@@ -375,7 +397,8 @@ a.zeile:hover .zeile__jahr, a.zeile:hover .zeile__info, a.zeile:hover .tag { col
 .mitmachen .klein { color: var(--rot-zart); }
 .mitmachen a:not(.btn) { color: #fff; }
 .mitmachen .btn--ghost { border-color: rgba(255, 255, 255, 0.7); color: #fff; }
-.mitmachen .btn--ghost:hover { background: #fff; color: var(--rot); }
+.mitmachen .btn--ghost { --fuell: #fff; }
+.mitmachen .btn--ghost:hover { color: var(--rot); }
 .jt { background: var(--rot-tief); padding: 28px; display: flex; flex-direction: column; gap: 10px; }
 .jt .kicker { color: var(--rot-zart); }
 .jt p:not(.kicker) { color: var(--rot-zart); font-size: 16px; }
@@ -691,7 +714,8 @@ a.jt:hover { transform: translateY(-3px); box-shadow: 0 18px 36px -20px rgba(0, 
 .jt-einladung .stapel { position: relative; max-width: 38em; }
 .jt-einladung .mitmachen__text { color: #fff; }
 .jt-einladung .btn--ghost { border-color: rgba(255, 255, 255, 0.7); color: #fff; }
-.jt-einladung .btn--ghost:hover { background: #fff; color: var(--rot); }
+.jt-einladung .btn--ghost { --fuell: #fff; }
+.jt-einladung .btn--ghost:hover { color: var(--rot); }
 .jt-einladung__stempel {
   position: absolute; right: clamp(16px, 5vw, 80px); top: 50%; transform: translateY(-50%) rotate(var(--kipp));
   padding: 18px 24px; border: 10px solid #fff; text-align: center;
@@ -834,7 +858,6 @@ a.kontaktkarte--rot:hover { color: #fff; }
   .btn svg, .pfeil-link svg, .ticket__link svg { transition: translate 0.3s cubic-bezier(0.2, 0.7, 0.1, 1); }
   .btn:hover svg, .pfeil-link:hover svg, a.ticket__link:hover svg { translate: 4px 0; }
   .btn:hover svg:first-child:not(:last-child) { translate: 0 0; }
-  .btn--rot { transition: background 0.2s, color 0.2s, border-color 0.2s, translate 0.25s, box-shadow 0.25s; }
   .btn--rot:hover { translate: 0 -2px; box-shadow: 0 12px 24px -14px rgba(127, 23, 34, 0.75); }
   .pfeil-link { background: linear-gradient(currentColor, currentColor) 0 calc(100% - 8px) / 0 2px no-repeat; transition: background-size 0.35s cubic-bezier(0.2, 0.7, 0.1, 1), color 0.2s; }
   .pfeil-link:hover { background-size: calc(100% - 26px) 2px; text-decoration: none; }
@@ -906,6 +929,120 @@ a.kontaktkarte--rot:hover { color: #fff; }
   @view-transition { navigation: none; }
   .wort__innen, [data-reveal] { animation: none !important; opacity: 1 !important; translate: none !important; rotate: none !important; }
 }
+
+/* ==========================================================================
+   Interaktion (Hover, Tippen, Filter, Fotos)
+   Maus-Effekte nur bei (hover: hover) and (pointer: fine), Tipp-Rückmeldung überall.
+   ========================================================================== */
+
+/* ---------- Tippen auf dem Handy: kurze Rückmeldung ---------- */
+.chip:active, .ticket__link:active, .unternav a:active { scale: 0.96; }
+.kontaktkarte:active, a.jt:active { scale: 0.985; }
+.chip { transition: background 0.25s, border-color 0.25s, color 0.25s, scale 0.15s; }
+
+/* ---------- Labels: Quadrat dreht sich beim Erscheinen ein ---------- */
+.bewegt [data-reveal].ist-da .label::before,
+.bewegt .hero .label::before,
+.bewegt .seitenkopf .label::before { animation: label-dreh 0.9s cubic-bezier(0.2, 0.7, 0.1, 1) both; animation-delay: calc(var(--verz, 0ms) + 150ms); }
+@keyframes label-dreh { from { rotate: -200deg; scale: 0.3; } }
+
+/* ---------- Akte: Karte neigt sich zur Maus, Lichtreflex (bewegung.ts setzt --rx/--ry/--gx/--gy) ---------- */
+.akt__bild { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.1, 1); }
+.akt.wird-geneigt .akt__bild { transition-duration: 0.12s; }
+.akt__bild::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.4s;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 55%);
+  mix-blend-mode: soft-light;
+}
+.akt:hover .akt__bild::after { opacity: 1; }
+.akt__ziffer { z-index: 2; }
+
+@media (hover: hover) and (pointer: fine) {
+  /* Tickets: der Abriss löst sich wie beim Abreißen */
+  .ticket__link { transform-origin: 0 0; transition: rotate 0.45s cubic-bezier(0.2, 0.7, 0.1, 1), translate 0.45s cubic-bezier(0.2, 0.7, 0.1, 1), background 0.2s, color 0.2s; }
+  .ticket:not(.ticket--vorbei):hover .ticket__link { rotate: 2.4deg; translate: 2px 4px; }
+  .ticket__perfo { transition: border-color 0.3s; }
+  .ticket:not(.ticket--vorbei):hover .ticket__perfo { border-top-color: var(--rot); }
+
+  /* Theaterzettel: Zeile leuchtet auf */
+  .zettel__liste dd, .zettel__liste dt::after { transition: color 0.25s, border-color 0.25s; }
+  .zettel__liste div:hover dd { color: var(--rot); }
+  .zettel__liste div:hover dt::after { border-bottom-color: var(--rot); }
+
+  /* Kontaktkarten: Symbol bewegt sich */
+  .kontaktkarte:hover .kontaktkarte__icon svg { animation: symbol-wackelt 0.7s ease; }
+  @keyframes symbol-wackelt { 20% { rotate: -14deg; } 40% { rotate: 11deg; } 60% { rotate: -6deg; } 80% { rotate: 3deg; } }
+
+  /* Filter-Chips */
+  .chip:not([aria-pressed='true']):hover { border-color: currentColor; }
+
+  /* Fuß: der rote Punkt in „Vorhang auf.“ hüpft */
+  .fuss__gross .rot { display: inline-block; }
+  .fuss__gross:hover .rot { animation: punkt-huepft 0.9s cubic-bezier(0.3, 0, 0.2, 1); }
+  @keyframes punkt-huepft { 30% { translate: 0 -0.4em; } 55% { translate: 0 0; } 70% { translate: 0 -0.12em; } 85% { translate: 0 0; } }
+
+  /* Chronik-Einträge */
+  .eintrag { transition: border-color 0.2s, translate 0.3s cubic-bezier(0.2, 0.7, 0.1, 1), opacity 0.7s cubic-bezier(0.2, 0.7, 0.1, 1); }
+  .eintrag:not(.eintrag--hinweis):hover { translate: 0 -3px; }
+}
+
+/* ---------- Unternavigation: Markierung gleitet zum aktuellen Abschnitt ---------- */
+.unternav__inner { position: relative; }
+.unternav a { position: relative; z-index: 1; }
+.unternav__pille {
+  position: absolute; left: 0; top: 10px; z-index: 0; width: 0; height: 42px; border-radius: 999px;
+  background: var(--tinte); opacity: 0; pointer-events: none;
+  transition: translate 0.5s cubic-bezier(0.2, 0.7, 0.1, 1), width 0.5s cubic-bezier(0.2, 0.7, 0.1, 1), opacity 0.3s;
+}
+.unternav__pille.da { opacity: 1; }
+.hat-pille a[aria-current='true'] { background: transparent; }
+.ruhig .unternav__pille { transition: none; }
+
+/* ---------- Filter: Karten gleiten an ihren neuen Platz (View Transitions) ---------- */
+html.vt-filter::view-transition-old(root), html.vt-filter::view-transition-new(root) { animation: none; }
+html.vt-filter::view-transition-group(*) { animation-duration: 0.5s; animation-timing-function: cubic-bezier(0.2, 0.7, 0.1, 1); }
+
+/* ---------- Fotos groß ansehen ---------- */
+[data-gross] { cursor: zoom-in; }
+[data-gross]:focus-visible { outline: 3px solid var(--rot); outline-offset: 3px; }
+.lightbox {
+  width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0;
+  background: transparent; color: var(--creme); overflow: hidden;
+}
+.lightbox::backdrop { background: rgba(26, 21, 19, 0.94); }
+.lightbox[open] { display: grid; place-items: center; animation: lb-auf 0.3s ease both; }
+.lightbox figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 72px 88px 28px; max-width: 100%; }
+.lightbox img {
+  display: block; width: auto; height: auto; max-width: min(100%, 1400px); max-height: calc(100dvh - 190px); object-fit: contain;
+  /* Kleine Archivfotos (z. B. 240 px) auf eine brauchbare Größe bringen, bis bessere Dateien da sind */
+  min-width: min(100%, 680px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+}
+.lightbox.wechselt img { animation: lb-bild 0.4s cubic-bezier(0.2, 0.7, 0.1, 1) both; }
+.lightbox figcaption { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-size: 15px; color: #ddd5cb; }
+.lightbox__nr { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #b4aaa2; }
+.lightbox button {
+  position: fixed; z-index: 2; width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%;
+  border: 1.5px solid rgba(247, 243, 236, 0.35); background: rgba(247, 243, 236, 0.08); color: var(--creme); cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, scale 0.15s;
+}
+.lightbox button:hover { background: var(--rot); border-color: var(--rot); }
+.lightbox button:active { scale: 0.92; }
+.lightbox__zu { top: 16px; right: 16px; }
+.lightbox__zurueck, .lightbox__vor { top: 50%; translate: 0 -50%; }
+.lightbox__zurueck { left: 16px; }
+.lightbox__vor { right: 16px; }
+.lightbox__zurueck[hidden], .lightbox__vor[hidden] { display: none; }
+@media (max-width: 600px) {
+  .lightbox figure { padding: 64px 12px 96px; }
+  .lightbox img { max-height: calc(100dvh - 220px); min-width: 100%; }
+  .lightbox__zurueck, .lightbox__vor { top: auto; bottom: 24px; translate: none; }
+  .lightbox__zurueck { left: calc(50% - 64px); }
+  .lightbox__vor { right: calc(50% - 64px); }
+}
+@keyframes lb-auf { from { opacity: 0; } }
+@keyframes lb-bild { from { opacity: 0; scale: 0.96; } }
+.ruhig .lightbox[open], .ruhig .lightbox.wechselt img { animation: none; }
 
 /* Bewegung reduzieren */
 @media (prefers-reduced-motion: reduce) {

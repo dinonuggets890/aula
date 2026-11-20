@@ -149,10 +149,61 @@ function scheinwerfer() {
   });
 }
 
+/* ---------- 6. Große Buttons ziehen leicht zur Maus ---------- */
+function magnetisch() {
+  document.querySelectorAll<HTMLElement>('.btn--gross, .kopf__nav .btn, .mitmachen .btn, .jt-einladung .btn').forEach((btn) => {
+    let geplant = false, x = 0, y = 0;
+    const zeichnen = () => {
+      geplant = false;
+      const r = btn.getBoundingClientRect();
+      const dx = (x - (r.left + r.width / 2)) / r.width;
+      const dy = (y - (r.top + r.height / 2)) / r.height;
+      btn.style.translate = `${(dx * 10).toFixed(1)}px ${(dy * 8 - 2).toFixed(1)}px`;
+    };
+    btn.addEventListener('pointermove', (e) => {
+      x = e.clientX; y = e.clientY;
+      if (!geplant) { geplant = true; requestAnimationFrame(zeichnen); }
+    }, { passive: true });
+    btn.addEventListener('pointerleave', () => { btn.style.translate = ''; });
+  });
+}
+
+/* ---------- 7. Akte: Karte neigt sich zur Maus, Lichtreflex folgt ---------- */
+function neigen() {
+  document.querySelectorAll<HTMLElement>('.akt').forEach((akt) => {
+    const bild = akt.querySelector<HTMLElement>('.akt__bild');
+    if (!bild) return;
+    let geplant = false, x = 0, y = 0;
+    const zeichnen = () => {
+      geplant = false;
+      const r = bild.getBoundingClientRect();
+      const px = Math.min(1, Math.max(0, (x - r.left) / r.width));
+      const py = Math.min(1, Math.max(0, (y - r.top) / r.height));
+      bild.style.setProperty('--ry', `${((px - 0.5) * 9).toFixed(2)}deg`);
+      bild.style.setProperty('--rx', `${((0.5 - py) * 7).toFixed(2)}deg`);
+      bild.style.setProperty('--gx', `${(px * 100).toFixed(1)}%`);
+      bild.style.setProperty('--gy', `${(py * 100).toFixed(1)}%`);
+    };
+    akt.addEventListener('pointerenter', () => akt.classList.add('wird-geneigt'));
+    akt.addEventListener('pointermove', (e) => {
+      x = e.clientX; y = e.clientY;
+      if (!geplant) { geplant = true; requestAnimationFrame(zeichnen); }
+    }, { passive: true });
+    akt.addEventListener('pointerleave', () => {
+      akt.classList.remove('wird-geneigt');
+      ['--rx', '--ry'].forEach((v) => bild.style.removeProperty(v));
+    });
+  });
+}
+
 if (bewegt) {
   erscheinen();
   zaehlen();
   bilder();
   if (!sparsam) laufband();
-  if (!sparsam && feineMaus) scheinwerfer();
+  if (!sparsam && feineMaus) {
+    scheinwerfer();
+    magnetisch();
+    neigen();
+  }
 }

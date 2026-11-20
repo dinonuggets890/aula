@@ -67,13 +67,15 @@ const titel = kommend.length && d?.spielplan_titel ? d.spielplan_titel.split(/(?
 )}
 
 <script>
+  import { mitUebergang } from '../scripts/uebergang';
   document.querySelectorAll('[data-monatsfilter]').forEach((filter) => {
-    const karten = filter.closest('section')?.querySelectorAll<HTMLElement>('[data-termine] > li') ?? [];
+    const karten = [...(filter.closest('section')?.querySelectorAll<HTMLElement>('[data-termine] > li') ?? [])];
     filter.querySelectorAll<HTMLButtonElement>('button').forEach((btn) => {
       btn.addEventListener('click', () => {
         const monat = btn.dataset.monat;
         filter.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-        karten.forEach((k) => { k.hidden = !!monat && k.dataset.monat !== monat; });
+        // Karten gleiten an ihren neuen Platz statt zu springen
+        mitUebergang(karten, () => karten.forEach((k) => { k.hidden = !!monat && k.dataset.monat !== monat; }));
       });
     });
   });

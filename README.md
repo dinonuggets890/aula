@@ -105,6 +105,12 @@ SGN_PLATZHALTER=1 npm run dev
 - **Maus** (nur Desktop): Scheinwerfer folgt dem Zeiger auf den dunklen Bühnen, der rote Rahmen weicht aus, Karten und Buttons reagieren beim Darüberfahren.
 - **Scroll-gebunden** (Chrome, Edge, Safari 26+): Bilder schweben leicht, Titel der Bühne zieht nach oben weg, „Vorhang auf.“ steigt auf. Läuft ohne JavaScript direkt im Browser.
 - **Laufband** reagiert auf das Scrolltempo, **Zahlen** zählen hoch, **Bilder** blenden beim Laden ein, **Seitenwechsel** werden weich überblendet.
+- **Laufband auf der Kante:** Es hat keine eigene Höhe und liegt mittig auf der Kante unter der Bühne. Der Kippwinkel wird auf breiten Bildschirmen kleiner, damit die Kante bei jeder Breite verdeckt ist (geprüft von 320 bis 5600 px).
+- **Buttons:** Füllfarbe läuft von links ein, große Buttons ziehen leicht zur Maus, beim Tippen geben sie kurz nach.
+- **Eintrittskarten:** Der Abriss löst sich beim Darüberfahren. **Akte** neigen sich zur Maus mit Lichtreflex.
+- **Unternavigation:** Die dunkle Markierung gleitet zum aktuellen Abschnitt; auf dem Handy rollt die Leiste mit.
+- **Filter** (Monate, Chronik): Karten gleiten an ihren neuen Platz (View Transitions).
+- **Fotos groß ansehen:** Klick, Tippen oder Enter öffnet die Lightbox; Pfeiltasten oder Wischen blättern, Esc schließt (`src/scripts/lightbox.ts`).
 
 Leistung und Barrierefreiheit:
 

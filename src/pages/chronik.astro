@@ -76,29 +76,42 @@ for (const e of eintraege) {
 </Base>
 
 <script>
+  import { mitUebergang } from '../scripts/uebergang';
   const filter = document.querySelector('[data-artfilter]');
   const zaehler = document.querySelector('[data-zaehler]');
+  function anwenden(art: string | undefined) {
+    let gesamt = 0;
+    document.querySelectorAll<HTMLElement>('[data-jahrzehnt]').forEach((dz) => {
+      let n = 0;
+      dz.querySelectorAll<HTMLElement>('li[data-art]').forEach((li) => {
+        const passt = !art || li.dataset.art === art || li.dataset.art === 'hinweis';
+        li.hidden = !passt;
+        if (passt && li.dataset.art !== 'hinweis') n++;
+      });
+      const anz = dz.querySelector('[data-anzahl]');
+      if (anz) anz.textContent = String(n);
+      dz.hidden = n === 0;
+      gesamt += n;
+    });
+    if (zaehler) zaehler.textContent = String(gesamt);
+  }
+  // Nur was gerade (fast) im Bild ist, gleitet; der Rest ändert sich sofort (spart Rechenzeit)
+  const imBild = () =>
+    [...document.querySelectorAll<HTMLElement>('.jahrzehnt li[data-art], .jahrzehnt__kopf')].filter((el) => {
+      const r = el.getBoundingClientRect();
+      return r.height > 0 && r.bottom > -innerHeight * 0.5 && r.top < innerHeight * 1.5;
+    });
   filter?.querySelectorAll<HTMLButtonElement>('button').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const art = btn.dataset.art;
       filter.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-      let gesamt = 0;
-      document.querySelectorAll<HTMLElement>('[data-jahrzehnt]').forEach((dz) => {
-        let n = 0;
-        dz.querySelectorAll<HTMLElement>('li[data-art]').forEach((li) => {
-          const passt = !art || li.dataset.art === art || li.dataset.art === 'hinweis';
-          li.hidden = !passt;
-          if (passt && li.dataset.art !== 'hinweis') n++;
-        });
-        const anz = dz.querySelector('[data-anzahl]');
-        if (anz) anz.textContent = String(n);
-        dz.hidden = n === 0;
-        gesamt += n;
-      });
-      if (zaehler) zaehler.textContent = String(gesamt);
+      mitUebergang(imBild(), () => anwenden(btn.dataset.art));
     });
   });
-  // Vorauswahl per Adresse, z. B. /chronik/?art=klein (Link von der Seite „Junges Theater“)
+  // Vorauswahl per Adresse, z. B. /chronik/?art=klein (Link von der Seite „Junges Theater“), ohne Animation
   const vorwahl = new URLSearchParams(location.search).get('art');
-  if (vorwahl) filter?.querySelector<HTMLButtonElement>(`button[data-art="${CSS.escape(vorwahl)}"]`)?.click();
+  const vorwahlBtn = vorwahl ? filter?.querySelector<HTMLButtonElement>(`button[data-art="${CSS.escape(vorwahl)}"]`) : null;
+  if (vorwahlBtn) {
+    filter!.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === vorwahlBtn)));
+    anwenden(vorwahl!);
+  }
 </script>
